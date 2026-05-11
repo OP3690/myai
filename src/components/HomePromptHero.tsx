@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, Sparkles, Wand2 } from "lucide-react";
-import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { lintPrompt } from "@/lib/linter";
 import { MetricBreakdown } from "./MetricBreakdown";
+import { PromptImprovement } from "./PromptImprovement";
 
 const PLACEHOLDER =
   "Paste your prompt — e.g. \"help me learn coding\" or \"write a blog post about AI\"";
@@ -13,7 +13,11 @@ const SAMPLES: { label: string; text: string }[] = [
   { label: "Vague learning ask", text: "help me learn coding" },
   { label: "Generic email ask", text: "write a reply to this email" },
   { label: "Lazy debug", text: "fix this bug" },
-  { label: "Polite mess", text: "can you please help me with writing something about climate change it should be detailed but also short thanks" },
+  {
+    label: "Polite mess",
+    text:
+      "can you please help me with writing something about climate change it should be detailed but also short thanks",
+  },
 ];
 
 export function HomePromptHero() {
@@ -21,11 +25,8 @@ export function HomePromptHero() {
   const report = useMemo(() => lintPrompt(prompt), [prompt]);
   const hasContent = report.stats.words > 0;
 
-  const ctaHref =
-    "/fix" + (prompt.trim() ? `?prompt=${encodeURIComponent(prompt.trim())}` : "");
-
   return (
-    <div className="mx-auto mt-10 max-w-3xl">
+    <div className="mx-auto mt-10 max-w-5xl space-y-6">
       <div className="card relative overflow-hidden p-5 sm:p-6">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/10 via-transparent to-accent-cyan/10" />
         <div className="mb-3 flex items-center justify-between">
@@ -54,31 +55,33 @@ export function HomePromptHero() {
           data-testid="home-prompt-input"
         />
 
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-baseline gap-3">
-            <span className="text-xs text-ink-fade">
-              {hasContent ? (
-                <>
-                  {report.stats.words} words ·{" "}
-                  <span className={report.score >= 80 ? "text-emerald-300" : report.score >= 50 ? "text-amber-300" : "text-rose-300"}>
-                    Score {report.score}/100
-                  </span>{" "}
-                  · {report.issues.length} issue{report.issues.length === 1 ? "" : "s"}
-                </>
-              ) : (
-                <>Type or paste a prompt above — instant local score, no upload.</>
-              )}
+        <div className="mt-3 flex flex-wrap items-baseline gap-3 text-xs text-ink-fade">
+          {hasContent ? (
+            <>
+              <span>{report.stats.words} words</span>
+              <span>·</span>
+              <span
+                className={
+                  report.score >= 80
+                    ? "text-emerald-300"
+                    : report.score >= 50
+                    ? "text-amber-300"
+                    : "text-rose-300"
+                }
+              >
+                Score {report.score}/100
+              </span>
+              <span>·</span>
+              <span>
+                {report.issues.length} issue
+                {report.issues.length === 1 ? "" : "s"}
+              </span>
+            </>
+          ) : (
+            <span>
+              Type or paste a prompt above — corrected version and insights appear instantly. Nothing leaves your browser.
             </span>
-          </div>
-          <Link
-            href={ctaHref}
-            className="btn-primary"
-            data-testid="home-improve-cta"
-          >
-            <Wand2 className="h-4 w-4" />
-            {hasContent ? "Improve with AI" : "Open Prompt Fixer"}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          )}
         </div>
 
         {hasContent && (
@@ -87,6 +90,8 @@ export function HomePromptHero() {
           </div>
         )}
       </div>
+
+      {hasContent && <PromptImprovement prompt={prompt} />}
     </div>
   );
 }
