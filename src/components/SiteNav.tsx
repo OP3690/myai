@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sparkles, Shield, BookOpen, Scissors } from "lucide-react";
+import { StreakBadge } from "./StreakBadge";
 
 const LINKS = [
   { href: "/fix", label: "Prompt Fixer", icon: Sparkles },
@@ -23,6 +24,7 @@ export function SiteNav() {
           <span className="text-base font-semibold tracking-tight sm:text-lg">
             fixai<span className="text-accent-glow">prompt</span>
           </span>
+          <StreakBadge />
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           {LINKS.map(({ href, label, icon: Icon, isNew }) => {
@@ -76,7 +78,9 @@ export function SiteFooter() {
             { href: "/fix", label: "Prompt Fixer" },
             { href: "/safe-paste", label: "Safe Paste" },
             { href: "/chunker", label: "Prompt Chunker" },
+            { href: "/prompt-diff", label: "Prompt Diff" },
             { href: "/templates", label: "Prompt Templates" },
+            { href: "/glossary", label: "Glossary" },
           ]}
         />
         <FooterCol

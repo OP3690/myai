@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -58,6 +58,18 @@ export function SafePaste() {
   const [mode, setMode] = useState<MaskMode>("plain");
   const [showRaw, setShowRaw] = useState<boolean>(false);
   const [copied, setCopied] = useState<"none" | "masked" | "summary">("none");
+
+  // Pick up content stashed by the bookmarklet on first mount.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const stashed = sessionStorage.getItem("fixaiprompt.bookmarklet");
+      if (stashed) {
+        setInput(stashed);
+        sessionStorage.removeItem("fixaiprompt.bookmarklet");
+      }
+    } catch {}
+  }, []);
 
   const { output, detections } = useMemo(() => mask(input, mode), [input, mode]);
   const score = useMemo(() => computeLeakScore(detections), [detections]);

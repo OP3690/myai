@@ -7,6 +7,7 @@ import { lintPrompt } from "@/lib/linter";
 import { MetricBreakdown } from "./MetricBreakdown";
 import { PromptImprovement } from "./PromptImprovement";
 import { SharePromptFix } from "./SharePromptFix";
+import { SnarkyReview } from "./SnarkyReview";
 
 const PLACEHOLDER =
   "Paste your prompt — e.g. \"help me learn coding\" or \"write a blog post about AI\"";
@@ -88,8 +89,9 @@ export function HomePromptHero() {
         </div>
 
         {hasContent && (
-          <div className="mt-4">
+          <div className="mt-4 space-y-3">
             <MetricBreakdown metrics={report.metrics} />
+            <SnarkyReview report={report} />
           </div>
         )}
       </div>

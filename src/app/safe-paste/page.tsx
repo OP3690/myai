@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BookmarkletInstall } from "@/components/BookmarkletInstall";
 import { SafePaste } from "@/components/SafePaste";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Shield, Lock, EyeOff, Zap } from "lucide-react";
@@ -43,6 +44,10 @@ export default function SafePastePage() {
 
         <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
           <SafePaste />
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+          <BookmarkletInstall />
         </section>
 
         <section className="mx-auto max-w-5xl px-6 py-16">

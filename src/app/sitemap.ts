@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { GLOSSARY } from "@/lib/glossary";
 import { TEMPLATES } from "@/lib/templates";
 
 const BASE = "https://fixaiprompt.com";
@@ -10,7 +11,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/fix`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/safe-paste`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/chunker`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/prompt-diff`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/glossary`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/safe-chatgpt-paste`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/mask-api-keys`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/sanitize-logs-for-ai`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
@@ -24,5 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticUrls, ...templateUrls];
+  const glossaryUrls = GLOSSARY.map((g) => ({
+    url: `${BASE}/glossary/${g.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticUrls, ...templateUrls, ...glossaryUrls];
 }
