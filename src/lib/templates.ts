@@ -401,6 +401,212 @@ export const TEMPLATES: Template[] = [
     platforms: ["claude", "chatgpt", "grok"],
     tags: ["resume", "career", "fun"],
   },
+
+  // === Added in Phase 2 ===
+
+  // LEARNING
+  {
+    slug: "quiz-me-until-i-master-it",
+    title: "Quiz Me Until I Master It",
+    tagline: "AI tutor that drills you until weak spots disappear.",
+    category: "learning",
+    beforePrompt: "quiz me on <topic>",
+    betterPrompt:
+      "Act as an exam coach. Quiz me on: <TOPIC>. My level: <BEGINNER / INTERMEDIATE / ADVANCED>.\n\nRules of play:\n- Ask ONE question at a time, then wait for my answer.\n- After each answer, score it (correct / partially correct / wrong) and explain in 1–2 sentences.\n- Track a running mental list of my weak sub-topics. Re-ask similar questions until I get them right 2× in a row.\n- Mix question types: definition, application, edge case, tricky multiple-choice.\n- After every 5 questions, give a 2-line progress summary and the topics I still need to drill.\n\nStart with a difficulty calibration question.",
+    whyItWorks: [
+      "Spaced repetition on YOUR weak spots beats a flat quiz.",
+      "One question at a time matches how humans actually learn.",
+      "Difficulty calibration tunes the rest of the session to your real level.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini"],
+    tags: ["study", "quiz", "exam", "tutor"],
+  },
+  {
+    slug: "exam-revision-generator",
+    title: "Exam Revision Generator",
+    tagline: "Turn a syllabus into a tight, time-boxed revision plan.",
+    category: "learning",
+    beforePrompt: "help me revise for my exam",
+    betterPrompt:
+      "Build me a revision plan.\n\nExam: <EXAM NAME, DATE>\nTime I have: <NUMBER> days × <HOURS> per day\nTopics covered (paste syllabus): <PASTE>\nMy strongest 2 topics: <X, Y>\nMy weakest 2 topics: <P, Q>\n\nGive me:\n1. A day-by-day plan in a markdown table: day | topic | sub-topic | minutes | type (read/quiz/practice)\n2. Weakest topics scheduled twice — once early, once near the end.\n3. A 1-page cheat-sheet outline I should make for the most question-heavy topics.\n4. The single highest-yield topic I should NOT skip.\n\nKeep the daily total within my available time. Don't over-schedule.",
+    whyItWorks: [
+      "Weak-topic double-pass matches retention research.",
+      "Time-boxed schedule respects reality, not aspiration.",
+      "Cheat-sheet outline + highest-yield call-out gives the panic-day plan.",
+    ],
+    platforms: ["chatgpt", "claude", "gemini"],
+    tags: ["exam", "study", "revision"],
+  },
+
+  // CODING
+  {
+    slug: "explain-stack-trace",
+    title: "Explain This Stack Trace",
+    tagline: "Decode a stack trace into the actual bug, in plain English.",
+    category: "coding",
+    beforePrompt: "explain this error:\n<paste>",
+    betterPrompt:
+      "Act as a senior engineer debugging with me.\n\nStack/error trace:\n```\n<PASTE>\n```\n\nLanguage / framework: <e.g. Node 20, Next.js 14>\nWhat I was doing when it happened: <ACTION>\n\nDo this in order:\n1. Translate the trace into ONE plain-English sentence: \"You're trying to X but Y.\"\n2. The likely root cause (not just the symptom).\n3. The 2 lines I should look at first, and what to check in each.\n4. The most common reason this exact error happens in this framework.\n5. A minimal repro I can try in isolation to confirm.\n\nIf the trace isn't enough to diagnose, tell me exactly what extra context you need.",
+    whyItWorks: [
+      "Forces the model to separate symptom from cause.",
+      "Pointing at the 2 most-suspicious lines is the actual debugging skill.",
+      "Permission to ask for context kills hallucinated answers.",
+    ],
+    platforms: ["claude", "chatgpt", "cursor", "copilot"],
+    tags: ["debug", "stack trace", "error"],
+  },
+  {
+    slug: "sql-query-optimizer",
+    title: "SQL Query Optimizer",
+    tagline: "Make a slow query fast — with the reasoning shown.",
+    category: "coding",
+    beforePrompt: "optimize this SQL:\n<paste>",
+    betterPrompt:
+      "Act as a database engineer. Optimize this query.\n\nQuery:\n```sql\n<PASTE>\n```\n\nDB engine + version: <e.g. Postgres 15>\nTable size (approx rows): <e.g. users ~50M, orders ~200M>\nCurrent execution time: <MS or unknown>\nWhat the query is supposed to return: <PLAIN ENGLISH>\n\nDeliver:\n1. The optimized query.\n2. A bullet list of EVERY change you made, with one-line reason each.\n3. Any indexes I should add (CREATE INDEX statements).\n4. The expected complexity / cost change (e.g. \"seq scan → index scan, O(N) → O(log N)\").\n5. Anything that depends on assumptions you can't verify — list those explicitly.",
+    whyItWorks: [
+      "Schema and engine info change the right answer drastically — required up front.",
+      "Per-change reasoning lets you spot a wrong assumption fast.",
+      "Index CREATE statements are the highest-leverage line in the answer.",
+    ],
+    platforms: ["claude", "chatgpt", "cursor"],
+    tags: ["sql", "database", "performance"],
+  },
+  {
+    slug: "api-documentation-generator",
+    title: "API Documentation Generator",
+    tagline: "Turn raw code into clean, copy-paste-ready API docs.",
+    category: "coding",
+    beforePrompt: "document this api",
+    betterPrompt:
+      "Generate API documentation for the following endpoint(s).\n\nCode:\n```<lang>\n<PASTE>\n```\n\nOutput format: Markdown with these sections for EACH endpoint:\n1. **Method + path** (one line)\n2. **What it does** (one sentence, plain English)\n3. **Auth** required (yes/no, type)\n4. **Request** — params/body, with example JSON and which fields are required.\n5. **Response** — example 200 body, example error responses with status codes.\n6. **Edge cases** — anything that returns differently than you'd expect.\n7. **Example curl** — copy-paste runnable.\n\nIf there's behavior you can't infer from the code (rate limits, side effects), list it under \"Assumptions to verify\".",
+    whyItWorks: [
+      "Sectioned output makes it useful as actual docs, not just a paragraph.",
+      "Runnable curl is the single thing API consumers want most.",
+      "Explicit assumptions section makes the doc safe to publish.",
+    ],
+    platforms: ["claude", "chatgpt", "cursor"],
+    tags: ["api", "documentation"],
+  },
+
+  // PRODUCTIVITY
+  {
+    slug: "meeting-summarizer",
+    title: "Meeting Summarizer",
+    tagline: "Turn a meeting transcript into an action-first summary.",
+    category: "productivity",
+    beforePrompt: "summarize this meeting:\n<paste>",
+    betterPrompt:
+      "Summarize this meeting. The reader will not have time to read the transcript.\n\nTranscript:\n<PASTE>\n\nDeliver, in this exact order:\n1. **Decisions made** — bullet list, each one sentence.\n2. **Action items** — table: owner | action | due date (use \"?\" if not stated).\n3. **Open questions / things we punted** — bullet list.\n4. **One-paragraph context** (so a new reader understands what the meeting was about).\n\nKeep names anonymous if the transcript has full names — use initials only.\nDo NOT include a generic 'here is what was discussed' wrap-up.",
+    whyItWorks: [
+      "Decisions and actions first matches what readers actually need.",
+      "Initials-only is a sensible privacy default.",
+      "Banning generic wrap-up prevents fluff at the bottom.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini"],
+    tags: ["meeting", "summary", "notes"],
+  },
+  {
+    slug: "linkedin-post-writer",
+    title: "LinkedIn Post Writer",
+    tagline: "Write a LinkedIn post that doesn't sound like LinkedIn.",
+    category: "productivity",
+    beforePrompt: "write a linkedin post about <topic>",
+    betterPrompt:
+      "Write a LinkedIn post.\n\nTopic: <TOPIC>\nThe one insight readers should take away: <THE INSIGHT>\nMy voice: <e.g. direct, dry, builder-mode — not motivational-speaker>\nLength: 5–8 short lines.\n\nRules:\n- Open with a specific scene, number, or contrarian claim. NOT a question.\n- One short line per idea — generous whitespace.\n- No emojis. No #hashtags. No \"thoughts?\" at the end.\n- End with the insight stated plainly, not as a moral.\n- Don't write like a LinkedIn coach. Write like a person.\n\nThen give 3 alternative opening lines I could swap in.",
+    whyItWorks: [
+      "Banned-patterns list kills the worst LinkedIn tropes.",
+      "Three opening-line variants let you A/B without re-prompting.",
+      "Specific scene/number opener consistently outperforms the rhetorical-question opener.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["linkedin", "writing", "social"],
+  },
+
+  // BUSINESS
+  {
+    slug: "high-ctr-headlines",
+    title: "High-CTR Headlines",
+    tagline: "10 headline options for an ad, post, or article.",
+    category: "business",
+    beforePrompt: "give me 10 headlines for <topic>",
+    betterPrompt:
+      "Generate 10 headlines.\n\nProduct / topic: <ONE-LINE WHAT IT IS>\nReader: <WHO they are, what they care about>\nThe single thing readers will get: <THE PROMISE>\nChannel: <e.g. Google ad, Twitter, blog SEO>\n\nRules:\n- Max 9 words per headline.\n- Each headline uses ONE of these mechanics — label which: contrarian claim, specific number, identity hook (\"For X\"), curiosity gap, problem statement, before-after.\n- No emojis. No clickbait that doesn't deliver. No \"the ultimate guide to\".\n- After the list, mark the top 3 you'd ship and why in one short line each.",
+    whyItWorks: [
+      "Mechanic labels force variety — 10 distinct angles, not 10 reworded variants.",
+      "Self-pick of top 3 saves a round trip.",
+      "Word cap mirrors actual ad real estate.",
+    ],
+    platforms: ["chatgpt", "claude"],
+    tags: ["headlines", "copywriting", "marketing"],
+  },
+  {
+    slug: "customer-persona-builder",
+    title: "Customer Persona Builder",
+    tagline: "A persona document that's actually useful for product decisions.",
+    category: "business",
+    beforePrompt: "create a customer persona for <product>",
+    betterPrompt:
+      "Build a customer persona for: <PRODUCT / SERVICE>\nTarget segment: <SPECIFIC SEGMENT, not 'small businesses'>\n\nDeliver, in this order:\n1. **One-line summary** (\"<role> who <pain> and <goal>\")\n2. **A day in their life** — 4 short bullets, time-stamped.\n3. **Top 3 pains** — each with a verbatim quote they'd actually say.\n4. **What they've tried before us** — and why it didn't work.\n5. **What they read / who they trust** — channels and voices, specific.\n6. **The trigger event** — what makes them search for a solution this week.\n7. **The objection that kills the deal** — and how we'd answer it.\n\nUse only details that would be plausibly true for THIS segment. Do not invent demographics that don't matter for the product.",
+    whyItWorks: [
+      "Verbatim quotes are gold for copywriting — most personas skip them.",
+      "Trigger-event + objection are the actual sales-critical pieces.",
+      "\"Things they tried before\" gives you positioning vs. competitors.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["persona", "marketing", "research"],
+  },
+
+  // CONTENT
+  {
+    slug: "carousel-post-writer",
+    title: "Instagram / LinkedIn Carousel Writer",
+    tagline: "10 slides of content that doesn't feel like ChatGPT wrote it.",
+    category: "content",
+    beforePrompt: "write a carousel about <topic>",
+    betterPrompt:
+      "Write a 10-slide carousel.\n\nTopic: <TOPIC>\nAudience: <WHO, what they currently believe>\nThe insight they'll have by slide 10: <INSIGHT>\nVoice: <e.g. confident, no-fluff, slightly contrarian>\n\nSlide-by-slide rules:\n- Slide 1: hook — max 8 words, no question.\n- Slides 2–8: one idea per slide, max 2 lines of text.\n- Slide 9: the contrarian or surprising point.\n- Slide 10: the takeaway + a soft CTA.\n\nFor each slide, give me:\n- Headline (the big text on the slide)\n- Body (the 1–2 lines of supporting text)\n- [VISUAL] cue in brackets (what should be on the slide besides text)\n\nNo emojis. No hashtags inside the slides.",
+    whyItWorks: [
+      "Per-slide format prevents the 'wall of text on slide 1' mistake.",
+      "Visual cues turn the prompt into a designable brief.",
+      "Reserving the contrarian slide for #9 mirrors how carousels actually go viral.",
+    ],
+    platforms: ["chatgpt", "claude"],
+    tags: ["carousel", "social", "linkedin", "instagram"],
+  },
+  {
+    slug: "thread-from-article",
+    title: "Twitter Thread from an Article",
+    tagline: "Compress a long article into a 7-tweet thread that earns clicks.",
+    category: "content",
+    beforePrompt: "turn this into a twitter thread:\n<paste>",
+    betterPrompt:
+      "Compress the following article into a 7-tweet thread.\n\nArticle:\n<PASTE>\n\nGoal: get clicks BACK to the original article. The thread should make the reader want the rest.\n\nRules:\n- Tweet 1: hook — max 12 words, specific scene or number, no question.\n- Tweets 2–6: one substantive insight each, 240 chars max, no \"continued in next tweet\" framing — each tweet stands alone.\n- Tweet 7: the strongest payoff from the article + a soft 'full article here' line.\n- No emojis. No hashtags. No \"a thread 🧵\" preamble. No \"like and follow\".\n\nBefore the thread, give me the SINGLE sentence from the article that should NOT be in the thread (the one you want them to click to read).",
+    whyItWorks: [
+      "The 'don't include this line' instruction creates the curiosity gap for clickthrough.",
+      "Hard 'each tweet stands alone' rule prevents the bad pattern of cliffhangers in the middle.",
+      "Banning thread-bro clichés makes the output ship-ready.",
+    ],
+    platforms: ["chatgpt", "claude", "grok"],
+    tags: ["twitter", "thread", "social"],
+  },
+
+  // FUN
+  {
+    slug: "roast-my-prompt",
+    title: "Roast My Prompt",
+    tagline: "Funny analysis of why your prompt is bad — then fix it.",
+    category: "fun",
+    beforePrompt: "review my prompt:\n<paste>",
+    betterPrompt:
+      "Roast the following prompt like a dry, slightly amused prompt-engineering critic.\n\nPrompt:\n<PASTE>\n\nFor the target model: <e.g. Claude / ChatGPT / Gemini>\n\nDo this:\n1. ONE devastating one-liner observation.\n2. The 3 specific things this prompt is missing.\n3. The single phrase in it that is doing the most damage.\n4. A rewritten version that actually works.\n5. End with one line of genuine encouragement.\n\nTone: observational, dry, no insults about the person.",
+    whyItWorks: [
+      "Roast framing breaks polite filler and reveals real weaknesses.",
+      "Concrete asks (the 3 missing things, the one damaging phrase) give the user a checklist.",
+      "Rewrite at the end converts entertainment into a usable prompt.",
+    ],
+    platforms: ["chatgpt", "claude", "grok"],
+    tags: ["prompt", "roast", "fun"],
+  },
 ];
 
 export function getTemplate(slug: string): Template | undefined {

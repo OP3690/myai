@@ -10,7 +10,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/fix" },
 };
 
-export default function FixPage() {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+export default function FixPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const rawPrompt = searchParams?.prompt;
+  const initialPrompt =
+    typeof rawPrompt === "string" ? rawPrompt.slice(0, 6000) : undefined;
+
   return (
     <>
       <SiteNav />
@@ -27,9 +37,9 @@ export default function FixPage() {
             </span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-base text-ink-dim sm:text-lg">
-            Paste any prompt. Get instant lint warnings — like a code linter,
-            but for the way you talk to AI — plus an optimized rewrite for
-            Claude, GPT, Gemini, Cursor, or Copilot.
+            Paste any prompt. Get a multi-metric score, lint feedback, and an
+            AI-powered rewrite tailored to Claude, GPT, Gemini, Grok, Cursor,
+            or Copilot.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-ink-dim">
             <span className="inline-flex items-center gap-1.5">
@@ -43,7 +53,7 @@ export default function FixPage() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-          <PromptWorkspace />
+          <PromptWorkspace initialPrompt={initialPrompt} />
         </section>
       </main>
       <SiteFooter />

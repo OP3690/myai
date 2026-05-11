@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { HomePromptHero } from "@/components/HomePromptHero";
 import {
   ArrowRight,
   BookOpen,
@@ -46,11 +47,11 @@ export default function Home() {
             optimize the prompt, redact the dangerous bits.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/safe-paste" className="btn-primary">
+            <Link href="/safe-paste" className="btn-ghost">
               <Shield className="h-4 w-4" /> Try Safe Paste
             </Link>
-            <Link href="/fix" className="btn-ghost">
-              <Sparkles className="h-4 w-4" /> Try Prompt Fixer
+            <Link href="/templates" className="btn-ghost">
+              <BookOpen className="h-4 w-4" /> Browse templates
             </Link>
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-ink-dim">
@@ -66,6 +67,8 @@ export default function Home() {
               <KeyRound className="h-3.5 w-3.5 text-accent-glow" /> Your API key stays local
             </span>
           </div>
+
+          <HomePromptHero />
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">

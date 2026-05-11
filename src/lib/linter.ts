@@ -1,15 +1,48 @@
 export type Severity = "error" | "warning" | "info";
 
+export type Metric =
+  | "clarity"
+  | "context"
+  | "structure"
+  | "specificity"
+  | "risk";
+
+export const METRICS: Metric[] = [
+  "clarity",
+  "context",
+  "structure",
+  "specificity",
+  "risk",
+];
+
+export const METRIC_LABEL: Record<Metric, string> = {
+  clarity: "Clarity",
+  context: "Context",
+  structure: "Structure",
+  specificity: "Specificity",
+  risk: "Hallucination Risk",
+};
+
+export const METRIC_BLURB: Record<Metric, string> = {
+  clarity: "Is the ask precise and unambiguous?",
+  context: "Does the model have the role, audience, and background it needs?",
+  structure: "Is the desired format, length, and order spelled out?",
+  specificity: "Are the nouns and verbs concrete instead of generic?",
+  risk: "How likely is the model to hallucinate or wander?",
+};
+
 export type LintIssue = {
   id: string;
   severity: Severity;
   title: string;
   message: string;
   fix: string;
+  metrics: Metric[];
 };
 
 export type LintReport = {
   score: number;
+  metrics: Record<Metric, number>;
   issues: LintIssue[];
   stats: {
     chars: number;
@@ -76,6 +109,12 @@ const POLITENESS_FLUFF = [
   /\b(thanks|thank\s+you)\s*[.!?]?\s*$/i,
 ];
 
+const HALLUCINATION_TRIGGERS = [
+  /\b(everything\s+about|all\s+about|complete\s+list\s+of\s+all|every\s+(possible|known))\b/i,
+  /\b(latest|recent|today'?s|current|up[- ]to[- ]date)\b/i,
+  /\b(make\s+up|invent|fabricate)\b/i,
+];
+
 const QUESTION_OR_IMPERATIVE = /(\?|\b(write|create|build|generate|explain|summarize|list|analyze|compare|translate|refactor|fix|debug|design|draft|outline|review|describe|define|convert|extract|find|implement)\b)/i;
 
 function countWords(text: string): number {
@@ -104,9 +143,18 @@ export function lintPrompt(input: string): LintReport {
   const sentences = countSentences(trimmed);
   const issues: LintIssue[] = [];
 
+  const emptyMetrics: Record<Metric, number> = {
+    clarity: 0,
+    context: 0,
+    structure: 0,
+    specificity: 0,
+    risk: 0,
+  };
+
   if (!trimmed) {
     return {
       score: 0,
+      metrics: emptyMetrics,
       issues: [],
       stats: { chars: 0, words: 0, sentences: 0 },
     };
@@ -116,6 +164,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "too-short",
       severity: "error",
+      metrics: ["clarity", "specificity", "context"],
       title: "Prompt is too short",
       message: `Only ${words} word${words === 1 ? "" : "s"}. The AI can't infer what you want from this little context.`,
       fix: "Add: the goal, the topic, the desired output format, and any constraints (length, tone, audience).",
@@ -126,6 +175,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "vague-opener",
       severity: "warning",
+      metrics: ["clarity", "specificity"],
       title: "Vague opener",
       message: "Phrases like \"help me with\" or \"can you please\" don't tell the model what to do.",
       fix: "Start with an action verb and a concrete deliverable. e.g. \"Write a 5-bullet summary of...\"",
@@ -136,6 +186,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "missing-role",
       severity: "info",
+      metrics: ["context"],
       title: "No role or persona set",
       message: "The model is more accurate when it knows what perspective to take.",
       fix: "Add: \"Act as a senior <X>...\" or \"You are an expert in <Y>.\"",
@@ -146,6 +197,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "missing-format",
       severity: "warning",
+      metrics: ["structure"],
       title: "No output format specified",
       message: "Without a format, you'll get unpredictable structure that's hard to parse or reuse.",
       fix: "Say what you want: a bulleted list, a JSON object with these keys, a 3-paragraph essay, etc.",
@@ -156,6 +208,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "missing-length",
       severity: "info",
+      metrics: ["structure"],
       title: "No length constraint",
       message: "The model will guess how long to go. That guess is usually wrong.",
       fix: "Add a target: \"in 3 sentences\", \"under 200 words\", \"a one-paragraph summary\".",
@@ -166,6 +219,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "missing-audience",
       severity: "info",
+      metrics: ["context"],
       title: "No audience specified",
       message: "\"Explain X\" is very different for a 5-year-old vs. a senior engineer.",
       fix: "Add: \"for a <audience>\" — e.g. \"for a non-technical founder\".",
@@ -176,6 +230,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "missing-examples",
       severity: "info",
+      metrics: ["context", "specificity"],
       title: "Consider an example",
       message: "Long prompts benefit hugely from a single concrete example of input → desired output.",
       fix: "Add a 'For example:' block showing one input/output pair.",
@@ -187,6 +242,7 @@ export function lintPrompt(input: string): LintReport {
       issues.push({
         id: `contradiction-${i}`,
         severity: "error",
+        metrics: ["clarity", "risk"],
         title: "Contradicting instructions",
         message: `Your prompt contains a contradiction (${c.phrase}). The model has to guess which one you mean.`,
         fix: "Pick one. If you really want both, explain the trade-off (e.g. \"short, but include the why\").",
@@ -199,6 +255,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "weak-language",
       severity: "warning",
+      metrics: ["clarity", "specificity"],
       title: "Weak / hedging language",
       message: "Words like \"maybe\", \"try to\", \"if possible\" make the model give wishy-washy answers.",
       fix: "Be direct. Replace hedges with imperatives: \"Do X\" instead of \"Maybe try to do X\".",
@@ -210,6 +267,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "politeness-fluff",
       severity: "info",
+      metrics: ["clarity"],
       title: "Politeness fluff",
       message: "Politeness doesn't help model quality and burns tokens.",
       fix: "Drop the \"please please\" and \"if you could\". Just state the task.",
@@ -220,6 +278,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "all-caps",
       severity: "warning",
+      metrics: ["clarity"],
       title: "Excessive ALL CAPS",
       message: "All-caps text reads as shouting and can confuse tokenization.",
       fix: "Use normal sentence case. Reserve caps for genuine emphasis on a single word.",
@@ -230,6 +289,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "no-punctuation",
       severity: "info",
+      metrics: ["clarity", "structure"],
       title: "One long sentence with no punctuation",
       message: "Hard for the model (and humans) to parse a long run-on sentence.",
       fix: "Break it into shorter sentences, or use a bulleted list of requirements.",
@@ -240,6 +300,7 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "no-clear-ask",
       severity: "warning",
+      metrics: ["clarity", "specificity"],
       title: "Unclear what you're actually asking for",
       message: "No question mark and no clear action verb (write/explain/summarize/etc).",
       fix: "Start with a clear imperative: \"Write...\", \"Explain...\", \"Summarize...\", \"List...\".",
@@ -252,16 +313,31 @@ export function lintPrompt(input: string): LintReport {
     issues.push({
       id: "multiple-asks",
       severity: "info",
+      metrics: ["structure", "specificity", "risk"],
       title: "Many requests in one prompt",
       message: "Multiple chained \"and... and also...\" tasks dilute model focus.",
       fix: "Split into separate prompts, or number the asks explicitly: 1) ... 2) ... 3) ...",
     });
   }
 
-  const score = computeScore(issues, words);
+  const hallucinationHits = HALLUCINATION_TRIGGERS.filter((r) => r.test(trimmed));
+  if (hallucinationHits.length >= 1) {
+    issues.push({
+      id: "hallucination-trigger",
+      severity: "warning",
+      metrics: ["risk"],
+      title: "High hallucination risk",
+      message: "Phrases like \"everything about X\", \"latest news\", or \"make up\" push the model toward unverifiable or fabricated content.",
+      fix: "Constrain the scope: ask for a finite list, a specific angle, or instruct the model to say \"I don't know\" when uncertain.",
+    });
+  }
+
+  const metrics = computeMetricScores(issues);
+  const score = computeOverallScore(metrics);
 
   return {
     score,
+    metrics,
     issues,
     stats: {
       chars: trimmed.length,
@@ -271,15 +347,32 @@ export function lintPrompt(input: string): LintReport {
   };
 }
 
-function computeScore(issues: LintIssue[], words: number): number {
-  if (words === 0) return 0;
-  let penalty = 0;
-  for (const i of issues) {
-    if (i.severity === "error") penalty += 25;
-    else if (i.severity === "warning") penalty += 12;
-    else penalty += 5;
+function severityWeight(s: Severity): number {
+  if (s === "error") return 25;
+  if (s === "warning") return 12;
+  return 5;
+}
+
+function computeMetricScores(issues: LintIssue[]): Record<Metric, number> {
+  const result: Record<Metric, number> = {
+    clarity: 100,
+    context: 100,
+    structure: 100,
+    specificity: 100,
+    risk: 100,
+  };
+  for (const issue of issues) {
+    const penalty = severityWeight(issue.severity);
+    for (const m of issue.metrics) {
+      result[m] = Math.max(0, result[m] - penalty);
+    }
   }
-  return Math.max(0, Math.min(100, 100 - penalty));
+  return result;
+}
+
+function computeOverallScore(metrics: Record<Metric, number>): number {
+  const vals = METRICS.map((m) => metrics[m]);
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
 }
 
 export function severityColor(s: Severity): string {
@@ -292,4 +385,16 @@ export function severityLabel(s: Severity): string {
   if (s === "error") return "Error";
   if (s === "warning") return "Warning";
   return "Suggestion";
+}
+
+export function metricColor(value: number): string {
+  if (value >= 80) return "bg-emerald-400";
+  if (value >= 50) return "bg-amber-400";
+  return "bg-rose-400";
+}
+
+export function metricTextColor(value: number): string {
+  if (value >= 80) return "text-emerald-300";
+  if (value >= 50) return "text-amber-300";
+  return "text-rose-300";
 }
