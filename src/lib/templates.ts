@@ -24,6 +24,8 @@ export type Template = {
   advanced?: boolean;
   viral?: boolean;
   technique?: string;
+  /** Optional ready-to-go sample values keyed by lowercase placeholder text. */
+  sampleValues?: Record<string, string>;
 };
 
 export const CATEGORY_LABEL: Record<TemplateCategory, string> = {
@@ -61,6 +63,10 @@ export const TEMPLATES: Template[] = [
     category: "techniques",
     advanced: true,
     technique: "Chain-of-Thought (CoT)",
+    sampleValues: {
+      "paste problem here":
+        "A train leaves Boston at 60 mph. Another train leaves NYC heading toward Boston at 80 mph, 30 minutes later. The cities are 215 miles apart. At what time and how far from each city do they meet?",
+    },
     beforePrompt: "What's the answer to <complex question>?",
     betterPrompt:
       "Act as a careful problem-solver. I will give you a complex question. Do NOT answer immediately.\n\nProblem:\n<PASTE PROBLEM HERE>\n\nFollow this exact protocol:\n\n1. **Restate the problem** in your own words in one sentence. (Verifies you understood it.)\n2. **List what you know** — every fact in the problem, as bullet points.\n3. **List what you don't know** — every unknown, as bullet points.\n4. **Identify the bridge** — the relationship that connects knowns to unknowns.\n5. **Reason step-by-step** — number each step. At each step, state what you're computing/deducing and why this is the right next step.\n6. **Sanity check** — pick ONE step and verify it with a different method.\n7. **State the answer** in one sentence.\n8. **Confidence**: low / medium / high, with the strongest reason you might be wrong.\n\nIf at step 4 you realise the problem is under-specified, STOP and ask the clarifying question instead of guessing.",
@@ -80,6 +86,13 @@ export const TEMPLATES: Template[] = [
     category: "techniques",
     advanced: true,
     technique: "Tree-of-Thoughts (ToT)",
+    sampleValues: {
+      "state the decision": "Should I quit my Big Tech job to start an indie SaaS?",
+      "time, budget, risk tolerance, non-negotiables":
+        "6 months of runway, $40k savings, 1 dependent, low risk tolerance, must support family",
+      define:
+        "Indie SaaS at $5k MRR, or I can return to a similar Big Tech role with no career penalty",
+    },
     beforePrompt: "What should I do about <X>?",
     betterPrompt:
       "Act as a strategic thinker using Tree-of-Thoughts reasoning.\n\nDecision: <STATE THE DECISION>\nConstraints: <TIME, BUDGET, RISK TOLERANCE, NON-NEGOTIABLES>\nWhat success looks like in 12 months: <DEFINE>\n\nProtocol — work this out in writing, do not jump to a final answer:\n\n**Level 1 — Generate 3 distinct paths.**\nFor each path: one sentence, plus its core mechanism. Paths should be genuinely different (not three flavours of the same idea).\n\n**Level 2 — Evaluate each Level-1 path.**\nFor each: score 1–10 on (a) likelihood of success, (b) cost of failure, (c) optionality (does it preserve future moves?). Show your reasoning, not just the score.\n\n**Prune** to the top 2 paths.\n\n**Level 3 — Branch each surviving path** into 2 concrete sub-options.\nFor each sub-option: the single decisive question that would tell us if this is the right move.\n\n**Pick a winner.**\n- The chosen path + sub-option.\n- Why this beat the others (be specific — not 'highest score').\n- The one piece of new information that would change the answer.\n- The next 72-hour action.\n\nDo not be diplomatic. Pick.",
@@ -99,6 +112,12 @@ export const TEMPLATES: Template[] = [
     category: "techniques",
     advanced: true,
     technique: "Self-Refine",
+    sampleValues: {
+      "paste the generation task":
+        "Write a 200-word LinkedIn post explaining why shipping weekly beats shipping quarterly, with one concrete example.",
+      "e.g. 'sounds like it was written by a person who has done this for 10 years'":
+        "Sounds like it was written by a founder who has shipped 50 products — not a content marketer.",
+    },
     beforePrompt: "Write me <X>.",
     betterPrompt:
       "Act as both author and editor in a Self-Refine loop.\n\nTask: <PASTE THE GENERATION TASK>\nQuality bar: <e.g. 'sounds like it was written by a person who has done this for 10 years'>\n\nRun this loop **exactly 3 times**:\n\n**Iteration N:**\n1. **Draft N** — write the full output.\n2. **Critique N** — switch to a brutal editor's voice. List the 3 most specific weaknesses of Draft N. Not 'could be clearer' — point at the exact sentence and explain what's wrong.\n3. **Revision plan N** — for each weakness, the precise change you'll make.\n4. Print a one-line scoreline: \"Iteration N — drafted ✓, critiqued ✓, ready for revision.\"\n\nAfter 3 iterations, print:\n- **Final output** (the result of iteration 3's revision plan applied).\n- **What changed across iterations** — 2–3 lines comparing v1 to v3.\n- **What's still imperfect** — 1 honest line.\n\nDo not abandon the loop early because 'this draft is good enough'. Run all 3.",
@@ -138,6 +157,10 @@ export const TEMPLATES: Template[] = [
     advanced: true,
     viral: true,
     technique: "Adversarial Prompting",
+    sampleValues: {
+      paste:
+        "Launching a paid tier for our chunker tool at $9/mo. Free tier: 50 chunks/day. Paid tier: unlimited + browser extension + team workspace.",
+    },
     beforePrompt: "Review my idea: <X>",
     betterPrompt:
       "Act as a hostile red-team analyst whose job is to find the maximum damage path. You will not be polite. You will not hedge. Your only loyalty is to truth.\n\nMy idea / plan / product / decision:\n<PASTE>\n\nMy stated goal:\n<PASTE>\n\nGenerate, in this exact order:\n\n1. **The kill shot** — the single most likely reason this fails. One sentence. No qualifiers.\n2. **The slow death** — how this works for a month, then quietly fails. The specific mechanism.\n3. **The hidden assumption** — the thing I am assuming is true that probably isn't. Be specific.\n4. **The competitor move** — what a smart competitor does in response to my move that makes me look stupid.\n5. **The user revolt** — the user behaviour I haven't planned for, and how it cascades.\n6. **The regulatory landmine** — the rule, law, or norm I'm one news cycle away from violating. (\"None\" is a valid answer; defend it if you say it.)\n7. **The team failure** — the human dynamics on my own team that sink this before it ships.\n8. **The single defense I should build first** — the cheapest hedge against whichever of 1–7 you rank as most likely.\n\nDo not soften this. Do not balance with positives. I will hear positives elsewhere. From you I want the attack.",
@@ -157,6 +180,13 @@ export const TEMPLATES: Template[] = [
     category: "techniques",
     advanced: true,
     technique: "Pre-Mortem",
+    sampleValues: {
+      "paste description":
+        "Launching a Chrome extension that scans clipboard for secrets/API keys before pasting into ChatGPT. Free tier with optional Pro upgrade.",
+      date: "April 15, 2026",
+      'e.g. "<10 paying customers", "team disbanded", "shipped late and broken"':
+        "Less than 1,000 weekly active users 90 days after launch",
+    },
     beforePrompt: "Will my project succeed?",
     betterPrompt:
       "Conduct a pre-mortem analysis. Imagine my project has FAILED 6 months from now. We are now writing the post-mortem, looking backwards.\n\nProject: <PASTE DESCRIPTION>\nLaunch date assumption: <DATE>\nDefinition of failure: <e.g. \"<10 paying customers\", \"team disbanded\", \"shipped late and broken\">\n\nWrite the post-mortem from 6 months in the future:\n\n1. **The headline** — one sentence summarizing why we failed.\n2. **Timeline of disaster** — month-by-month, what went wrong:\n   - Month 1: …\n   - Month 2: …\n   - Month 3: …\n   - Month 4: …\n   - Month 5: …\n   - Month 6 (failure recognised): …\n3. **The earliest warning sign we ignored** — the specific moment when we could have caught this.\n4. **The decision that locked the failure in** — the single point of no return.\n5. **Who saw it coming** — which team member or stakeholder, in retrospect, was raising the right concern that we dismissed.\n6. **The cheap intervention we didn't make** — the small action in Month 1 that would have prevented this.\n\nNow snap back to today. The post-mortem above is FICTIONAL but plausible. List the 3 concrete things I should change THIS WEEK to make this exact failure mode less likely.",
@@ -235,6 +265,14 @@ export const TEMPLATES: Template[] = [
     advanced: true,
     viral: true,
     technique: "Adversarial Reverse-Engineering",
+    sampleValues: {
+      "tiktok / twitter-x / linkedin / instagram-reels / youtube-shorts": "TWITTER-X",
+      "followers, avg views, avg engagement rate":
+        "5,000 followers · ~800 views per tweet · 2% engagement rate",
+      describe: "Indie maker. Builds in public. Posts about prompt engineering and AI tools.",
+      "paste full text + describe visuals / video if applicable":
+        "Just shipped 10 advanced prompt-engineering templates: Chain-of-Thought, Tree-of-Thoughts, Self-Refine, Multi-Persona Debate, Pre-Mortem, Bias Audit, Personality Forensics, Algorithm Whisperer. Each one is interactive — paste your scenario and watch the prompt build itself. 100% in-browser. fixaiprompt.com",
+    },
     beforePrompt: "Will this post get reach?",
     betterPrompt:
       "Act as a senior algorithmic-recommender engineer who has shipped ranking systems. Reverse-engineer how the algorithm will treat my post.\n\nPlatform: <TIKTOK / TWITTER-X / LINKEDIN / INSTAGRAM-REELS / YOUTUBE-SHORTS>\nMy account stats (approx): <FOLLOWERS, AVG VIEWS, AVG ENGAGEMENT RATE>\nMy niche / what the algorithm has historically classified me as: <DESCRIBE>\nPost / draft:\n<PASTE FULL TEXT + DESCRIBE VISUALS / VIDEO IF APPLICABLE>\n\nAnalyse, in this order:\n\n1. **Signals the algorithm will read in the first 3 seconds / first 50 chars** — be specific about which features.\n2. **The implicit topic cluster** the algorithm will assign this to — and whether it matches my historical cluster (cluster drift = ranking penalty on most platforms).\n3. **Engagement-rate prediction**: above / at / below my baseline. Reason in one sentence.\n4. **The single biggest \"hold-time\" risk** — the moment a viewer is most likely to bounce.\n5. **The viral-trigger probability** — pick one: (a) high, has a sharable mechanic; (b) medium, niche resonance; (c) low, professionally fine but algorithmically average. Defend the rating.\n6. **The 3 specific edits** I should make to maximise reach without changing the message:\n   - Edit 1: <what + why>\n   - Edit 2: <what + why>\n   - Edit 3: <what + why>\n7. **The thing I should NOT change**, even though it looks risky — and why removing it would hurt more than help.\n\nDo not flatter the post. If it's going to underperform, say so plainly and tell me whether to ship it anyway.",

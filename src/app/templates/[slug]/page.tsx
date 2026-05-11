@@ -72,7 +72,11 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
           </div>
 
           <div className="mt-10">
-            <TemplateFiller slug={t.slug} betterPrompt={t.betterPrompt} />
+            <TemplateFiller
+              slug={t.slug}
+              betterPrompt={t.betterPrompt}
+              sampleValues={t.sampleValues}
+            />
           </div>
 
           <details className="card mt-6 group p-5 sm:p-6">
