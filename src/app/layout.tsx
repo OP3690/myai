@@ -4,12 +4,17 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://fixaiprompt.com"),
   title: {
-    default: "FixAIPrompt — Fix your AI prompts. Instantly.",
+    default: "FixAIPrompt — Fix prompts. Remove secrets. Use AI safely.",
     template: "%s · FixAIPrompt",
   },
   description:
-    "Paste any prompt and get instant lint warnings plus an AI-rewritten version optimized for Claude, GPT, Gemini, Cursor, or Copilot. Free, browser-only, bring your own key.",
+    "The privacy layer for AI. Lint and rewrite any prompt, detect API keys / JWTs / PII before pasting into ChatGPT, Claude, or Gemini. Free, 100% client-side.",
   keywords: [
+    "ai data loss prevention",
+    "mask api keys",
+    "safe chatgpt paste",
+    "sanitize logs for ai",
+    "remove pii from json",
     "prompt engineering",
     "prompt linter",
     "fix ai prompt",
@@ -21,18 +26,18 @@ export const metadata: Metadata = {
     "copilot prompts",
   ],
   openGraph: {
-    title: "FixAIPrompt — Fix your AI prompts. Instantly.",
+    title: "FixAIPrompt — Fix prompts. Remove secrets. Use AI safely.",
     description:
-      "Lint and rewrite any AI prompt. Optimized for Claude, GPT, Gemini, Cursor, Copilot.",
+      "The privacy layer for AI. Detect & mask API keys, JWTs, PII before pasting into ChatGPT, Claude, or Gemini.",
     url: "https://fixaiprompt.com",
     siteName: "FixAIPrompt",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FixAIPrompt — Fix your AI prompts. Instantly.",
+    title: "FixAIPrompt — Fix prompts. Remove secrets. Use AI safely.",
     description:
-      "Lint and rewrite any AI prompt. Optimized for Claude, GPT, Gemini, Cursor, Copilot.",
+      "The privacy layer for AI. Mask secrets before pasting into ChatGPT or Claude.",
   },
   robots: { index: true, follow: true },
 };
