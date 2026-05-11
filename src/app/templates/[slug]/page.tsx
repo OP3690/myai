@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { CATEGORY_EMOJI, CATEGORY_LABEL, TEMPLATES, getTemplate } from "@/lib/templates";
 import { TemplateActions } from "@/components/TemplateActions";
-import { ArrowLeft, Lightbulb } from "lucide-react";
+import { ArrowLeft, Flame, Lightbulb, Zap } from "lucide-react";
 
 export function generateStaticParams() {
   return TEMPLATES.map((t) => ({ slug: t.slug }));
@@ -46,8 +46,24 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
           <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             {t.title}
           </h1>
+          {t.technique && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-violet-300">
+              <Zap className="h-3 w-3" />
+              Technique: {t.technique}
+            </div>
+          )}
           <p className="mt-3 max-w-2xl text-base text-ink-dim">{t.tagline}</p>
           <div className="mt-4 flex flex-wrap gap-1.5 text-xs">
+            {t.advanced && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-violet-400/30 bg-violet-400/15 px-2 py-0.5 font-bold uppercase tracking-wider text-violet-300">
+                <Zap className="h-3 w-3" /> Advanced
+              </span>
+            )}
+            {t.viral && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-rose-400/30 bg-rose-400/15 px-2 py-0.5 font-bold uppercase tracking-wider text-rose-300">
+                <Flame className="h-3 w-3" /> Viral
+              </span>
+            )}
             {t.tags.map((tag) => (
               <span key={tag} className="rounded-full border border-white/10 px-2 py-0.5 text-ink-dim">
                 #{tag}

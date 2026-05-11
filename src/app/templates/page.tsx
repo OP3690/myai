@@ -5,20 +5,25 @@ import {
   CATEGORY_EMOJI,
   CATEGORY_LABEL,
   TEMPLATES,
+  type Template,
   type TemplateCategory,
 } from "@/lib/templates";
-import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Flame, Sparkles, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Prompt Templates — Tested before/after prompts for ChatGPT, Claude, Gemini",
+  title: "AI Prompt Templates — Advanced techniques + before/after for ChatGPT, Claude, Gemini",
   description:
-    "A curated, growing library of prompt templates. Each one shows the lazy prompt, the better prompt, and exactly why it works. Free, no signup.",
+    "Curated prompt-engineering templates including advanced techniques (Chain-of-Thought, Tree-of-Thoughts, Self-Refine, Multi-Persona, Pre-Mortem). Each shows the lazy prompt, the better prompt, and why it works.",
   alternates: { canonical: "/templates" },
 };
 
 export default function TemplatesPage() {
-  const grouped = new Map<TemplateCategory, typeof TEMPLATES>();
-  for (const t of TEMPLATES) {
+  const advanced = TEMPLATES.filter((t) => t.category === "techniques");
+  const others = TEMPLATES.filter((t) => t.category !== "techniques");
+  const viral = TEMPLATES.filter((t) => t.viral && t.category !== "techniques");
+
+  const grouped = new Map<TemplateCategory, Template[]>();
+  for (const t of others) {
     const arr = grouped.get(t.category) || [];
     arr.push(t);
     grouped.set(t.category, arr);
@@ -32,22 +37,74 @@ export default function TemplatesPage() {
         <section className="mx-auto max-w-4xl px-6 pb-10 pt-10 text-center sm:pt-14">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-ink-dim">
             <BookOpen className="h-3 w-3 text-accent-glow" />
-            Templates · {TEMPLATES.length} curated · growing
+            Templates · {TEMPLATES.length} curated · {advanced.length} advanced techniques
           </div>
           <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-5xl">
-            Prompt templates that{" "}
+            Prompt templates with{" "}
             <span className="bg-gradient-to-r from-accent-glow via-accent to-accent-cyan bg-clip-text text-transparent">
-              actually work
+              real prompt engineering
             </span>
             .
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-base text-ink-dim sm:text-lg">
-            Every template shows the lazy prompt, the upgraded version, and a
-            short explanation of <em>why</em> the upgrade matters. Steal them,
-            adapt them, and stop guessing.
+            Not a prompt list. A library of <strong className="text-ink">advanced patterns</strong> — Chain-of-Thought, Tree-of-Thoughts, Self-Refine, Multi-Persona Debate, Adversarial Red-Team, Pre-Mortem, Bias Audit, Algorithm Whisperer — plus everyday templates with before/after.
           </p>
         </section>
 
+        {/* Advanced Techniques — featured */}
+        {advanced.length > 0 && (
+          <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+            <div className="card relative overflow-hidden p-5 sm:p-6">
+              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-violet-500/15 via-rose-500/5 to-amber-500/10" />
+              <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
+                <div>
+                  <h2 className="inline-flex items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl">
+                    <Zap className="h-5 w-5 text-amber-300" />
+                    Advanced Techniques
+                  </h2>
+                  <p className="mt-1 text-sm text-ink-dim">
+                    Cutting-edge prompt patterns used in real agentic systems. Each one explains the technique it&apos;s based on.
+                  </p>
+                </div>
+                <span className="rounded-full border border-amber-400/30 bg-amber-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
+                  {advanced.length} patterns
+                </span>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {advanced.map((t) => (
+                  <TemplateCard key={t.slug} t={t} variant="advanced" />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Viral picks */}
+        {viral.length > 0 && (
+          <section className="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+            <div className="card relative overflow-hidden p-5 sm:p-6">
+              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-rose-500/15 via-orange-500/5 to-amber-500/10" />
+              <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
+                <div>
+                  <h2 className="inline-flex items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl">
+                    <Flame className="h-5 w-5 text-rose-300" />
+                    Viral picks
+                  </h2>
+                  <p className="mt-1 text-sm text-ink-dim">
+                    Shareable, screenshot-able outputs people post about.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {viral.map((t) => (
+                  <TemplateCard key={t.slug} t={t} variant="viral" />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* All the rest, grouped */}
         <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
           {cats.map((cat) => (
             <div key={cat} className="mb-12">
@@ -63,31 +120,7 @@ export default function TemplatesPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {grouped.get(cat)!.map((t) => (
-                  <Link
-                    key={t.slug}
-                    href={`/templates/${t.slug}`}
-                    className="card group flex flex-col p-5 transition hover:border-accent/30 hover:bg-bg-card"
-                  >
-                    <h3 className="text-base font-semibold text-ink group-hover:text-accent-glow">
-                      {t.title}
-                    </h3>
-                    <p className="mt-1.5 flex-1 text-sm text-ink-dim">
-                      {t.tagline}
-                    </p>
-                    <div className="mt-4 flex items-center justify-between text-xs text-ink-fade">
-                      <span className="flex flex-wrap gap-1.5">
-                        {t.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/10 px-2 py-0.5"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </span>
-                      <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:text-accent-glow" />
-                    </div>
-                  </Link>
+                  <TemplateCard key={t.slug} t={t} />
                 ))}
               </div>
             </div>
@@ -108,5 +141,59 @@ export default function TemplatesPage() {
       </main>
       <SiteFooter />
     </>
+  );
+}
+
+function TemplateCard({
+  t,
+  variant,
+}: {
+  t: Template;
+  variant?: "advanced" | "viral";
+}) {
+  return (
+    <Link
+      href={`/templates/${t.slug}`}
+      className={`card group relative flex flex-col p-5 transition hover:-translate-y-0.5 hover:border-accent/30 hover:bg-bg-card ${
+        variant === "advanced" ? "ring-1 ring-violet-400/20" : ""
+      } ${variant === "viral" ? "ring-1 ring-rose-400/20" : ""}`}
+    >
+      <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
+        <h3 className="text-base font-semibold text-ink group-hover:text-accent-glow">
+          {t.title}
+        </h3>
+        <div className="flex flex-wrap gap-1.5">
+          {t.advanced && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-violet-400/30 bg-violet-400/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-300">
+              <Zap className="h-2.5 w-2.5" /> Advanced
+            </span>
+          )}
+          {t.viral && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-rose-400/30 bg-rose-400/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-300">
+              <Flame className="h-2.5 w-2.5" /> Viral
+            </span>
+          )}
+        </div>
+      </div>
+      {t.technique && (
+        <div className="mb-2 text-xs font-medium text-accent-glow">
+          {t.technique}
+        </div>
+      )}
+      <p className="flex-1 text-sm text-ink-dim">{t.tagline}</p>
+      <div className="mt-4 flex items-center justify-between text-xs text-ink-fade">
+        <span className="flex flex-wrap gap-1.5">
+          {t.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/10 px-2 py-0.5"
+            >
+              #{tag}
+            </span>
+          ))}
+        </span>
+        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:text-accent-glow" />
+      </div>
+    </Link>
   );
 }

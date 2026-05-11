@@ -1,6 +1,7 @@
 export type Platform = "chatgpt" | "claude" | "gemini" | "grok" | "cursor" | "copilot";
 
 export type TemplateCategory =
+  | "techniques"
   | "learning"
   | "coding"
   | "productivity"
@@ -20,9 +21,13 @@ export type Template = {
   whyItWorks: string[];
   platforms: Platform[];
   tags: string[];
+  advanced?: boolean;
+  viral?: boolean;
+  technique?: string;
 };
 
 export const CATEGORY_LABEL: Record<TemplateCategory, string> = {
+  techniques: "Advanced Techniques",
   learning: "Learning",
   coding: "Coding",
   productivity: "Productivity",
@@ -34,6 +39,7 @@ export const CATEGORY_LABEL: Record<TemplateCategory, string> = {
 };
 
 export const CATEGORY_EMOJI: Record<TemplateCategory, string> = {
+  techniques: "⚡",
   learning: "📚",
   coding: "💻",
   productivity: "🧠",
@@ -45,6 +51,204 @@ export const CATEGORY_EMOJI: Record<TemplateCategory, string> = {
 };
 
 export const TEMPLATES: Template[] = [
+  // ════════════════════════════════════════════════════════════════════
+  // ADVANCED TECHNIQUES — cutting-edge prompt engineering patterns
+  // ════════════════════════════════════════════════════════════════════
+  {
+    slug: "chain-of-thought-reasoning",
+    title: "Chain-of-Thought Forced Reasoning",
+    tagline: "Make the model show its work before answering — dramatic accuracy gain on multi-step problems.",
+    category: "techniques",
+    advanced: true,
+    technique: "Chain-of-Thought (CoT)",
+    beforePrompt: "What's the answer to <complex question>?",
+    betterPrompt:
+      "Act as a careful problem-solver. I will give you a complex question. Do NOT answer immediately.\n\nProblem:\n<PASTE PROBLEM HERE>\n\nFollow this exact protocol:\n\n1. **Restate the problem** in your own words in one sentence. (Verifies you understood it.)\n2. **List what you know** — every fact in the problem, as bullet points.\n3. **List what you don't know** — every unknown, as bullet points.\n4. **Identify the bridge** — the relationship that connects knowns to unknowns.\n5. **Reason step-by-step** — number each step. At each step, state what you're computing/deducing and why this is the right next step.\n6. **Sanity check** — pick ONE step and verify it with a different method.\n7. **State the answer** in one sentence.\n8. **Confidence**: low / medium / high, with the strongest reason you might be wrong.\n\nIf at step 4 you realise the problem is under-specified, STOP and ask the clarifying question instead of guessing.",
+    whyItWorks: [
+      "Forcing explicit steps catches arithmetic and logic errors that intuition would miss.",
+      "The 'what you don't know' bullet is the most-skipped step in human reasoning — and where most errors originate.",
+      "The sanity check with a different method is the single move that doubles answer accuracy on complex problems.",
+      "Permission to stop and ask kills the 'confidently wrong' failure mode.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini", "grok"],
+    tags: ["reasoning", "accuracy", "math", "logic"],
+  },
+  {
+    slug: "tree-of-thoughts",
+    title: "Tree-of-Thoughts Decision Brancher",
+    tagline: "Explore 3 branches per decision, prune ruthlessly, beat one-shot answers.",
+    category: "techniques",
+    advanced: true,
+    technique: "Tree-of-Thoughts (ToT)",
+    beforePrompt: "What should I do about <X>?",
+    betterPrompt:
+      "Act as a strategic thinker using Tree-of-Thoughts reasoning.\n\nDecision: <STATE THE DECISION>\nConstraints: <TIME, BUDGET, RISK TOLERANCE, NON-NEGOTIABLES>\nWhat success looks like in 12 months: <DEFINE>\n\nProtocol — work this out in writing, do not jump to a final answer:\n\n**Level 1 — Generate 3 distinct paths.**\nFor each path: one sentence, plus its core mechanism. Paths should be genuinely different (not three flavours of the same idea).\n\n**Level 2 — Evaluate each Level-1 path.**\nFor each: score 1–10 on (a) likelihood of success, (b) cost of failure, (c) optionality (does it preserve future moves?). Show your reasoning, not just the score.\n\n**Prune** to the top 2 paths.\n\n**Level 3 — Branch each surviving path** into 2 concrete sub-options.\nFor each sub-option: the single decisive question that would tell us if this is the right move.\n\n**Pick a winner.**\n- The chosen path + sub-option.\n- Why this beat the others (be specific — not 'highest score').\n- The one piece of new information that would change the answer.\n- The next 72-hour action.\n\nDo not be diplomatic. Pick.",
+    whyItWorks: [
+      "Most decision prompts get a single-path answer. ToT systematically explores alternatives.",
+      "Three evaluation axes (success / failure cost / optionality) beat 'pros and cons' — optionality is what most amateurs miss.",
+      "Forcing a pruning step is the only way to escape 'option-paralysis' output.",
+      "The 'one piece of new info that would flip this' is the kill question for any decision.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini"],
+    tags: ["strategy", "decision", "branching", "tree-of-thoughts"],
+  },
+  {
+    slug: "self-refine-loop",
+    title: "Self-Refine — Generate → Critique → Revise (×3)",
+    tagline: "The single move that makes any output 2× better. Used in agentic systems.",
+    category: "techniques",
+    advanced: true,
+    technique: "Self-Refine",
+    beforePrompt: "Write me <X>.",
+    betterPrompt:
+      "Act as both author and editor in a Self-Refine loop.\n\nTask: <PASTE THE GENERATION TASK>\nQuality bar: <e.g. 'sounds like it was written by a person who has done this for 10 years'>\n\nRun this loop **exactly 3 times**:\n\n**Iteration N:**\n1. **Draft N** — write the full output.\n2. **Critique N** — switch to a brutal editor's voice. List the 3 most specific weaknesses of Draft N. Not 'could be clearer' — point at the exact sentence and explain what's wrong.\n3. **Revision plan N** — for each weakness, the precise change you'll make.\n4. Print a one-line scoreline: \"Iteration N — drafted ✓, critiqued ✓, ready for revision.\"\n\nAfter 3 iterations, print:\n- **Final output** (the result of iteration 3's revision plan applied).\n- **What changed across iterations** — 2–3 lines comparing v1 to v3.\n- **What's still imperfect** — 1 honest line.\n\nDo not abandon the loop early because 'this draft is good enough'. Run all 3.",
+    whyItWorks: [
+      "Single-shot output uses ~30% of a model's capacity. Self-refine pushes closer to 80%.",
+      "Forcing a brutal critique voice (different from the writer) breaks the model out of its first-draft attractor.",
+      "Numbering iterations and printing scoreline prevents the model from cheating by collapsing the loop.",
+      "Honest 'still imperfect' line at the end keeps the output from over-claiming.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini"],
+    tags: ["self-refine", "iteration", "quality", "agents"],
+  },
+  {
+    slug: "multi-persona-council",
+    title: "Multi-Persona Expert Council",
+    tagline: "Simulate 5 experts arguing — get a richer answer than any one expert could produce.",
+    category: "techniques",
+    advanced: true,
+    technique: "Multi-Persona Debate",
+    beforePrompt: "What do you think about <X>?",
+    betterPrompt:
+      "Simulate a panel of 5 distinct experts debating my question.\n\nQuestion: <PASTE QUESTION>\n\nThe panel:\n1. **The Skeptic** — distrusts the premise; demands evidence.\n2. **The Pragmatist** — only cares about what works in practice this quarter.\n3. **The Visionary** — thinks in 10-year time horizons.\n4. **The Cynic** — assumes incentives explain everything.\n5. **The Outsider** — has no domain expertise but excellent intuition about people.\n\nProtocol:\n\n**Round 1 — Opening positions.** Each persona gives their 2-sentence take. Distinct voices. No hedging.\n\n**Round 2 — Cross-examination.** Each persona challenges the position they disagree with most. One pointed question or counter-argument.\n\n**Round 3 — Rebuttals.** Each persona answers the challenge they received. Must concede at least one point.\n\n**Synthesis.** A neutral moderator (you) reads the transcript and outputs:\n- The 1 thing all 5 personas implicitly agreed on (their unstated shared assumption).\n- The 2 sharpest disagreements that remain.\n- A recommendation that integrates the strongest argument from each side.\n- The single experiment that would resolve the open disagreements.\n\nDo not let any persona dominate. The Outsider's intuition is as valid as the Pragmatist's experience.",
+    whyItWorks: [
+      "Each persona has a built-in cognitive bias. Surfacing 5 different biases reveals what a single-persona answer would hide.",
+      "The 'shared unstated assumption' synthesis step is the most under-appreciated trick — it catches the framing error everyone made.",
+      "Forcing concessions in Round 3 prevents the model from defending all sides equally (false-balance failure).",
+      "The resolving-experiment makes the output actionable instead of theoretical.",
+    ],
+    platforms: ["claude", "chatgpt", "gemini"],
+    tags: ["debate", "personas", "synthesis", "multi-agent"],
+  },
+  {
+    slug: "adversarial-red-team",
+    title: "Adversarial Red-Team Audit",
+    tagline: "Generate the strongest attack on your idea before launching. Find vulnerabilities before users do.",
+    category: "techniques",
+    advanced: true,
+    viral: true,
+    technique: "Adversarial Prompting",
+    beforePrompt: "Review my idea: <X>",
+    betterPrompt:
+      "Act as a hostile red-team analyst whose job is to find the maximum damage path. You will not be polite. You will not hedge. Your only loyalty is to truth.\n\nMy idea / plan / product / decision:\n<PASTE>\n\nMy stated goal:\n<PASTE>\n\nGenerate, in this exact order:\n\n1. **The kill shot** — the single most likely reason this fails. One sentence. No qualifiers.\n2. **The slow death** — how this works for a month, then quietly fails. The specific mechanism.\n3. **The hidden assumption** — the thing I am assuming is true that probably isn't. Be specific.\n4. **The competitor move** — what a smart competitor does in response to my move that makes me look stupid.\n5. **The user revolt** — the user behaviour I haven't planned for, and how it cascades.\n6. **The regulatory landmine** — the rule, law, or norm I'm one news cycle away from violating. (\"None\" is a valid answer; defend it if you say it.)\n7. **The team failure** — the human dynamics on my own team that sink this before it ships.\n8. **The single defense I should build first** — the cheapest hedge against whichever of 1–7 you rank as most likely.\n\nDo not soften this. Do not balance with positives. I will hear positives elsewhere. From you I want the attack.",
+    whyItWorks: [
+      "Most reviews are 80% praise and 20% gentle critique. This template inverts that, surfacing the actual risks.",
+      "Forcing the 'kill shot' to be a single sentence prevents hand-waving.",
+      "The 7 distinct failure-mode categories (kill / slow / assumption / competitor / user / regulatory / team) are taken from real post-mortem analyses.",
+      "Asking for the cheapest defense at the end converts the critique into a next action.",
+    ],
+    platforms: ["claude", "chatgpt", "grok"],
+    tags: ["red-team", "criticism", "risk", "viral"],
+  },
+  {
+    slug: "pre-mortem",
+    title: "Pre-Mortem Failure Analysis",
+    tagline: "Imagine the project failed 6 months from now. Work backwards. (Used at Amazon.)",
+    category: "techniques",
+    advanced: true,
+    technique: "Pre-Mortem",
+    beforePrompt: "Will my project succeed?",
+    betterPrompt:
+      "Conduct a pre-mortem analysis. Imagine my project has FAILED 6 months from now. We are now writing the post-mortem, looking backwards.\n\nProject: <PASTE DESCRIPTION>\nLaunch date assumption: <DATE>\nDefinition of failure: <e.g. \"<10 paying customers\", \"team disbanded\", \"shipped late and broken\">\n\nWrite the post-mortem from 6 months in the future:\n\n1. **The headline** — one sentence summarizing why we failed.\n2. **Timeline of disaster** — month-by-month, what went wrong:\n   - Month 1: …\n   - Month 2: …\n   - Month 3: …\n   - Month 4: …\n   - Month 5: …\n   - Month 6 (failure recognised): …\n3. **The earliest warning sign we ignored** — the specific moment when we could have caught this.\n4. **The decision that locked the failure in** — the single point of no return.\n5. **Who saw it coming** — which team member or stakeholder, in retrospect, was raising the right concern that we dismissed.\n6. **The cheap intervention we didn't make** — the small action in Month 1 that would have prevented this.\n\nNow snap back to today. The post-mortem above is FICTIONAL but plausible. List the 3 concrete things I should change THIS WEEK to make this exact failure mode less likely.",
+    whyItWorks: [
+      "Pre-mortems exploit a known psychological asymmetry: humans are vastly better at explaining failure than predicting it.",
+      "Forcing a month-by-month timeline catches gradual decay that single-point analysis misses.",
+      "'Who saw it coming' surfaces team-dynamics risk that purely strategic analysis misses.",
+      "Ending with 'this week' actions turns the exercise from theatre into intervention.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["pre-mortem", "risk", "strategy", "amazon"],
+  },
+  {
+    slug: "first-principles-decomposer",
+    title: "First-Principles Decomposer",
+    tagline: "Break the problem down to atomic facts. Rebuild from atoms. Catch the assumption everyone missed.",
+    category: "techniques",
+    advanced: true,
+    technique: "First Principles",
+    beforePrompt: "Why is <X> hard?",
+    betterPrompt:
+      "Use first-principles reasoning on this problem. Strip it to atoms before answering.\n\nProblem: <PASTE>\n\nProtocol:\n\n**Stage 1 — Decomposition.** Break the problem into its atomic components. For each component, classify it as:\n- **Fact** (verifiable, not in dispute)\n- **Assumption** (we are treating it as true but could verify)\n- **Belief** (a value judgment or convention, not a fact)\n- **Unknown** (we don't have this info)\n\nList every component. Be ruthless — if something can't be classified, it's probably a fuzzy intuition that needs sharpening.\n\n**Stage 2 — Assumption audit.** Take every Assumption from Stage 1. For each:\n- What evidence supports it?\n- What would falsify it?\n- Is it actually a Belief in disguise?\n\nMark any assumption that fails this audit as **\"NEEDS VERIFICATION\"**.\n\n**Stage 3 — Reconstruction.** Build the answer using only:\n- Facts from Stage 1\n- Verified assumptions\n- Explicitly stated beliefs (with their warrant)\n\nIgnore any \"received wisdom\" that didn't survive Stage 2.\n\n**Stage 4 — The hidden constraint.** State the single unstated rule that everyone tackling this problem accepts without justification. Is it actually a rule? What happens if we discard it?\n\nThis is where first-principles thinking earns its keep.",
+    whyItWorks: [
+      "The Fact/Assumption/Belief/Unknown classification is a forcing function — it makes you separate things humans constantly confuse.",
+      "Assumption audit catches the 'everyone-knows-X' failure that breaks more projects than technical limits.",
+      "The 'hidden constraint' question is the one Elon Musk talks about — and the one most prompts never reach.",
+      "Ignoring 'received wisdom' is what unlocks counterintuitive answers.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["first-principles", "reasoning", "strategy"],
+  },
+  {
+    slug: "cognitive-bias-audit",
+    title: "Cognitive Bias Pre-Decision Audit",
+    tagline: "Run your decision through 8 named biases. Catch your own blindspot before you commit.",
+    category: "techniques",
+    advanced: true,
+    technique: "Bias Audit",
+    beforePrompt: "Help me decide between X and Y.",
+    betterPrompt:
+      "Before I make this decision, audit my reasoning for cognitive biases.\n\nMy decision: <DESCRIBE>\nMy current leaning: <A or B>\nMy stated reasons:\n- <REASON 1>\n- <REASON 2>\n- <REASON 3>\n\nRun this decision through each of the 8 biases below. For each:\n- Is this bias present in my reasoning? Y / N / Maybe.\n- If yes/maybe, the specific phrase or reasoning step where it appears.\n- The corrective question I should ask myself.\n\nBiases:\n\n1. **Confirmation bias** — am I weighting evidence that supports my leaning more than evidence against it?\n2. **Anchoring** — has a number / first impression / initial estimate locked in my range?\n3. **Availability** — am I generalising from one memorable recent example?\n4. **Sunk cost** — am I valuing this option because I've already invested in it?\n5. **Status quo bias** — am I picking the safer option by default rather than on merit?\n6. **Optimism bias** — am I assuming the upside hits and the downside doesn't?\n7. **Social proof / authority** — am I leaning this way because of who else does?\n8. **Loss aversion** — am I weighting the loss-from-changing more than the gain-from-changing?\n\nAfter the audit, give me:\n- The 1 bias most likely distorting my judgement.\n- A reframe of the decision that controls for it.\n- The single piece of information that would let me decide cleanly.\n\nDo not soften. The point of this exercise is to find my blindspot.",
+    whyItWorks: [
+      "Most decision frameworks ignore the human running them. Bias audits center the user as the bug.",
+      "Forcing a Y/N/Maybe per bias prevents the model from hedging with 'maybe a little'.",
+      "Asking for the corrective question (not just the bias name) makes the audit actionable.",
+      "Ending with a reframe + missing-info question converts the audit into a clean next step.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["decision", "bias", "self-audit"],
+  },
+  {
+    slug: "personality-forensics",
+    title: "AI Personality Forensics",
+    tagline: "Paste 3 of your texts/posts/emails. Get a personality profile so accurate it's uncomfortable.",
+    category: "techniques",
+    advanced: true,
+    viral: true,
+    technique: "Stylometric Inference",
+    beforePrompt: "What is my personality?",
+    betterPrompt:
+      "Act as a forensic personality analyst. I will paste 3 writing samples I produced under different conditions. Read for signal, not content.\n\nSample 1 (recent message to a friend):\n<PASTE>\n\nSample 2 (recent professional email or post):\n<PASTE>\n\nSample 3 (an opinion or rant I wrote when I was annoyed):\n<PASTE>\n\nProtocol — do NOT analyse what I said, analyse HOW I say things.\n\nLook for:\n- Sentence length distribution and rhythm.\n- Use of qualifiers, hedges, intensifiers.\n- Specificity vs. abstraction.\n- Where I cluster nouns vs. verbs.\n- How I handle disagreement (avoidance, engagement, deflection).\n- What I leave UNSAID — what someone with my topic would normally mention but I skip.\n\nOutput, in this exact structure:\n\n1. **Three things I clearly care about** (inferred from emphasis, not content).\n2. **Three things I quietly worry about** (inferred from hedges, qualifications, what gets re-stated).\n3. **My communication style in one sentence.**\n4. **What I optimise for** — speed / clarity / being liked / being right / control / connection — pick the top 2 with the evidence.\n5. **The personality trait I broadcast vs. the one I actually have** — if there's a gap, name it.\n6. **The job / role I'd thrive in based on this signal** (not based on what I said).\n7. **The single sentence that gave you the most signal.**\n\nBe specific. Generic horoscope-style readings are a failure of this prompt — quote my actual words as evidence.",
+    whyItWorks: [
+      "Reading for HOW vs. what is the actual skill of personality inference — and what makes the output feel uncomfortably accurate.",
+      "Three samples across contexts (friend/professional/annoyed) triangulate signal that a single sample can't.",
+      "The 'broadcast vs. actual' gap question is the one no horoscope reveals.",
+      "Forcing the model to quote evidence kills generic 'you are creative and ambitious' output.",
+    ],
+    platforms: ["claude", "chatgpt"],
+    tags: ["personality", "viral", "forensics", "shareable"],
+  },
+  {
+    slug: "algorithm-whisperer",
+    title: "Algorithm Whisperer",
+    tagline: "Will this post go viral? Decode why the algorithm shows or hides it. (TikTok, Twitter, LinkedIn, Reels.)",
+    category: "techniques",
+    advanced: true,
+    viral: true,
+    technique: "Adversarial Reverse-Engineering",
+    beforePrompt: "Will this post get reach?",
+    betterPrompt:
+      "Act as a senior algorithmic-recommender engineer who has shipped ranking systems. Reverse-engineer how the algorithm will treat my post.\n\nPlatform: <TIKTOK / TWITTER-X / LINKEDIN / INSTAGRAM-REELS / YOUTUBE-SHORTS>\nMy account stats (approx): <FOLLOWERS, AVG VIEWS, AVG ENGAGEMENT RATE>\nMy niche / what the algorithm has historically classified me as: <DESCRIBE>\nPost / draft:\n<PASTE FULL TEXT + DESCRIBE VISUALS / VIDEO IF APPLICABLE>\n\nAnalyse, in this order:\n\n1. **Signals the algorithm will read in the first 3 seconds / first 50 chars** — be specific about which features.\n2. **The implicit topic cluster** the algorithm will assign this to — and whether it matches my historical cluster (cluster drift = ranking penalty on most platforms).\n3. **Engagement-rate prediction**: above / at / below my baseline. Reason in one sentence.\n4. **The single biggest \"hold-time\" risk** — the moment a viewer is most likely to bounce.\n5. **The viral-trigger probability** — pick one: (a) high, has a sharable mechanic; (b) medium, niche resonance; (c) low, professionally fine but algorithmically average. Defend the rating.\n6. **The 3 specific edits** I should make to maximise reach without changing the message:\n   - Edit 1: <what + why>\n   - Edit 2: <what + why>\n   - Edit 3: <what + why>\n7. **The thing I should NOT change**, even though it looks risky — and why removing it would hurt more than help.\n\nDo not flatter the post. If it's going to underperform, say so plainly and tell me whether to ship it anyway.",
+    whyItWorks: [
+      "Algorithmic ranking is a real engineering domain — naming the engineer's role triggers more accurate analysis.",
+      "Per-platform specificity is critical: TikTok / Twitter / LinkedIn algorithms have different feature weights, and conflating them produces useless advice.",
+      "The 'thing I should NOT change' question prevents over-editing posts into algorithmic mush.",
+      "Asking for hold-time risk catches the 'great post, bad opening' pattern.",
+      "Above/at/below baseline framing produces a calibrated prediction instead of generic praise.",
+    ],
+    platforms: ["claude", "chatgpt", "grok"],
+    tags: ["algorithm", "viral", "social", "growth"],
+  },
+
   // LEARNING
   {
     slug: "explain-like-im-5",
@@ -186,6 +390,7 @@ export const TEMPLATES: Template[] = [
     title: "Decision Maker",
     tagline: "Compare options without the model just agreeing with you.",
     category: "productivity",
+    advanced: true,
     beforePrompt: "should I take this job?",
     betterPrompt:
       "Help me decide between these options. Your job is to push back where I'm being lazy, not just validate me.\n\nDecision: <STATE THE DECISION>.\nMy gut leaning: <A or B>.\n\nOption A: <describe — pros and cons as you see them>\nOption B: <describe — pros and cons as you see them>\n\nDo this:\n1. List 3 things I'm probably underweighting.\n2. List 3 things I'm probably overweighting.\n3. Ask 2 questions that would change your answer.\n4. THEN give your recommendation and your confidence (low/med/high).\n\nDo not flatter me.",
@@ -204,6 +409,7 @@ export const TEMPLATES: Template[] = [
     title: "Startup Idea Validator",
     tagline: "Pressure-test an idea before you build it.",
     category: "business",
+    advanced: true,
     beforePrompt: "is this a good startup idea: <idea>",
     betterPrompt:
       "Act as a skeptical seed-stage investor. I am pitching you the following idea. Do NOT be encouraging — be useful.\n\nIdea: <DESCRIBE IDEA in 2–3 sentences>\nTarget customer: <WHO>\nWhy now: <WHY THIS WORKS NOW>\n\nReply with:\n1. The strongest reason this could be a $100M business.\n2. The 3 most likely reasons it dies in year 1.\n3. The single experiment I should run this week to learn the most for the least money.\n4. Comparable startups (alive or dead) and what we should learn from each.\n5. A score 1–10 on whether you'd take a meeting, with one-line reason.",
@@ -390,6 +596,7 @@ export const TEMPLATES: Template[] = [
     title: "Roast My Resume",
     tagline: "A friendly, useful roast of your CV.",
     category: "fun",
+    viral: true,
     beforePrompt: "review my resume:\n<paste>",
     betterPrompt:
       "Roast my resume like a hiring manager who's mildly amused but actually wants to help.\n\nResume:\n<PASTE>\n\nTarget role: <ROLE>\nTone: dry, observational, no insults about the person.\n\nDo this:\n1. ONE devastating one-liner about the resume's biggest weakness.\n2. The 3 phrases that sound like everyone else's resume — replace each.\n3. The thing on this resume I should be LEADING with but buried.\n4. The single edit that would most improve callback rate.\n5. End with one genuine compliment.",
@@ -596,6 +803,7 @@ export const TEMPLATES: Template[] = [
     title: "Roast My Prompt",
     tagline: "Funny analysis of why your prompt is bad — then fix it.",
     category: "fun",
+    viral: true,
     beforePrompt: "review my prompt:\n<paste>",
     betterPrompt:
       "Roast the following prompt like a dry, slightly amused prompt-engineering critic.\n\nPrompt:\n<PASTE>\n\nFor the target model: <e.g. Claude / ChatGPT / Gemini>\n\nDo this:\n1. ONE devastating one-liner observation.\n2. The 3 specific things this prompt is missing.\n3. The single phrase in it that is doing the most damage.\n4. A rewritten version that actually works.\n5. End with one line of genuine encouragement.\n\nTone: observational, dry, no insults about the person.",

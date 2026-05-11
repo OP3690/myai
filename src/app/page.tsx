@@ -27,7 +27,10 @@ export default function Home() {
   return (
     <>
       <SiteNav />
-      <main className="relative min-h-screen bg-hero-radial">
+      <main className="relative min-h-screen overflow-hidden bg-hero-radial">
+        <div className="aurora" aria-hidden>
+          <div className="orb" />
+        </div>
         {/* What's new ticker */}
         <div className="border-b border-white/5 bg-gradient-to-r from-rose-500/5 via-accent/10 to-accent-cyan/5">
           <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-6 py-2 text-xs">
@@ -146,6 +149,50 @@ export default function Home() {
 
         <SectionDivider />
 
+        {/* Advanced techniques promo */}
+        <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+          <div className="card relative overflow-hidden p-6 sm:p-10">
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-violet-500/20 via-rose-500/5 to-amber-500/10" />
+            <div className="absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-violet-500/30 blur-3xl" aria-hidden />
+            <div className="absolute -bottom-20 -left-20 -z-10 h-72 w-72 rounded-full bg-amber-500/20 blur-3xl" aria-hidden />
+            <div className="grid items-center gap-8 lg:grid-cols-2">
+              <div>
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
+                  <Zap className="h-3 w-3" />
+                  10 advanced techniques
+                </div>
+                <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+                  The patterns the{" "}
+                  <span className="bg-gradient-to-r from-violet-400 via-rose-300 to-amber-300 bg-clip-text text-transparent">
+                    pros
+                  </span>{" "}
+                  actually use.
+                </h2>
+                <p className="mt-4 max-w-xl text-balance text-ink-dim">
+                  Chain-of-Thought. Tree-of-Thoughts. Self-Refine. Multi-Persona Debate. Adversarial Red-Team. Pre-Mortem. Bias Audit. Personality Forensics. Algorithm Whisperer. Each one with the lazy prompt, the technique, and exactly why it works.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link href="/templates" className="btn-primary">
+                    Open the technique library <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+              <div className="grid gap-2.5 text-sm">
+                <TechniqueChip name="Chain-of-Thought" tone="violet" />
+                <TechniqueChip name="Tree-of-Thoughts" tone="cyan" />
+                <TechniqueChip name="Self-Refine Loop" tone="emerald" />
+                <TechniqueChip name="Multi-Persona Council" tone="amber" />
+                <TechniqueChip name="Adversarial Red-Team" tone="rose" />
+                <TechniqueChip name="Pre-Mortem Analysis" tone="sky" />
+                <TechniqueChip name="Cognitive Bias Audit" tone="violet" />
+                <TechniqueChip name="Algorithm Whisperer" tone="rose" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <SectionDivider />
+
         <section id="how" className="mx-auto max-w-5xl px-6 py-16">
           <div className="mb-10 text-center">
             <h2 className="text-balance text-2xl font-bold sm:text-3xl">How FixAIPrompt protects you</h2>
@@ -239,6 +286,29 @@ export default function Home() {
 function SectionDivider() {
   return (
     <div className="mx-auto h-px max-w-6xl bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+  );
+}
+
+function TechniqueChip({
+  name,
+  tone,
+}: {
+  name: string;
+  tone: "violet" | "rose" | "amber" | "cyan" | "emerald" | "sky";
+}) {
+  const map: Record<string, string> = {
+    violet: "border-violet-400/30 bg-violet-400/10 text-violet-200",
+    rose: "border-rose-400/30 bg-rose-400/10 text-rose-200",
+    amber: "border-amber-400/30 bg-amber-400/10 text-amber-200",
+    cyan: "border-cyan-400/30 bg-cyan-400/10 text-cyan-200",
+    emerald: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+    sky: "border-sky-400/30 bg-sky-400/10 text-sky-200",
+  };
+  return (
+    <div className={`flex items-center justify-between rounded-lg border px-3 py-2 backdrop-blur-sm ${map[tone]}`}>
+      <span className="font-mono text-xs sm:text-sm">{name}</span>
+      <Zap className="h-3.5 w-3.5 opacity-60" />
+    </div>
   );
 }
 
