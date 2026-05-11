@@ -78,6 +78,7 @@ export function SiteFooter() {
             { href: "/fix", label: "Prompt Fixer" },
             { href: "/safe-paste", label: "Safe Paste" },
             { href: "/chunker", label: "Prompt Chunker" },
+            { href: "/data-cleaner", label: "CSV / JSON Cleaner" },
             { href: "/prompt-diff", label: "Prompt Diff" },
             { href: "/templates", label: "Prompt Templates" },
             { href: "/glossary", label: "Glossary" },

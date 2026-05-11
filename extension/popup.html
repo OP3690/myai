@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FixAIPrompt</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+      html, body {
+        margin: 0;
+        background: #0a0a14;
+        color: #e7e7f0;
+        min-width: 320px;
+      }
+      body { padding: 14px; }
+      h1 {
+        margin: 0 0 4px 0;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo {
+        width: 22px; height: 22px;
+        border-radius: 6px;
+        background: rgba(124,92,255,0.2);
+        border: 1px solid rgba(167,139,250,0.4);
+        color: #a78bfa;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+      .brand-accent { color: #a78bfa; }
+      .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+      button, .button-link {
+        font: inherit;
+        background: rgba(124,92,255,0.15);
+        border: 1px solid rgba(124,92,255,0.4);
+        color: #c4b5fd;
+        padding: 6px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      button.secondary, .button-link.secondary {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(231,231,240,0.8);
+      }
+      .help { color: rgba(231,231,240,0.55); font-size: 11px; margin-top: 8px; line-height: 1.45; }
+      .result {
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        display: none;
+      }
+      .result.show { display: block; }
+      .score { font-family: ui-monospace, Menlo, monospace; font-weight: 700; }
+      .safe { color: #34d399; }
+      .warning { color: #fbbf24; }
+      .danger { color: #fb7185; }
+      ul { margin: 6px 0 0 0; padding-left: 18px; }
+      li { font-family: ui-monospace, Menlo, monospace; font-size: 11px; margin: 2px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>
+      <span class="logo">✦</span>
+      fixai<span class="brand-accent">prompt</span>
+    </h1>
+    <div class="help">
+      Auto-scans pastes on ChatGPT, Claude, Gemini, Copilot, Grok. Click below to scan your current clipboard manually.
+    </div>
+    <div class="row">
+      <button id="scan">Scan clipboard now</button>
+      <a class="button-link secondary" href="https://fixaiprompt.com/safe-paste?from=extension-popup" target="_blank">Open Safe Paste →</a>
+    </div>
+    <div id="result" class="result"></div>
+    <div class="help" style="margin-top: 14px;">
+      <span style="opacity:0.5;">100% client-side. Nothing leaves your laptop.</span>
+    </div>
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

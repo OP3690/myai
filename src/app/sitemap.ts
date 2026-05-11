@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/fix`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/safe-paste`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/chunker`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/data-cleaner`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/prompt-diff`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/glossary`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },

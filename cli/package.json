@@ -1,0 +1,45 @@
+{
+  "name": "fixaiprompt",
+  "version": "0.1.0",
+  "description": "Lint, score, and rewrite any AI prompt — from your terminal. Browser-only sibling at https://fixaiprompt.com",
+  "type": "module",
+  "bin": {
+    "fixaiprompt": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "ai",
+    "prompt",
+    "prompt-engineering",
+    "linter",
+    "cli",
+    "chatgpt",
+    "claude",
+    "llm",
+    "openai",
+    "anthropic"
+  ],
+  "author": "FixAIPrompt",
+  "license": "MIT",
+  "homepage": "https://fixaiprompt.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fixaiprompt/fixaiprompt"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.10",
+    "typescript": "^5.6.2"
+  }
+}
