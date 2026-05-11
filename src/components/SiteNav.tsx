@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, Shield, BookOpen } from "lucide-react";
+import { Sparkles, Shield, BookOpen, Scissors } from "lucide-react";
 
 const LINKS = [
   { href: "/fix", label: "Prompt Fixer", icon: Sparkles },
   { href: "/safe-paste", label: "Safe Paste", icon: Shield },
+  { href: "/chunker", label: "Chunker", icon: Scissors, isNew: true },
   { href: "/templates", label: "Templates", icon: BookOpen },
 ];
 
@@ -24,13 +25,13 @@ export function SiteNav() {
           </span>
         </Link>
         <nav className="flex items-center gap-1 text-sm">
-          {LINKS.map(({ href, label, icon: Icon }) => {
+          {LINKS.map(({ href, label, icon: Icon, isNew }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
                 key={href}
                 href={href}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 transition sm:px-3 ${
+                className={`relative inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 transition sm:px-3 ${
                   active
                     ? "bg-accent/15 text-accent-glow"
                     : "text-ink-dim hover:bg-white/5 hover:text-ink"
@@ -38,6 +39,11 @@ export function SiteNav() {
               >
                 <Icon className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">{label}</span>
+                {isNew && (
+                  <span className="ml-1 hidden rounded-full bg-rose-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-300 sm:inline">
+                    New
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -69,6 +75,7 @@ export function SiteFooter() {
           links={[
             { href: "/fix", label: "Prompt Fixer" },
             { href: "/safe-paste", label: "Safe Paste" },
+            { href: "/chunker", label: "Prompt Chunker" },
             { href: "/templates", label: "Prompt Templates" },
           ]}
         />

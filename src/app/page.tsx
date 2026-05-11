@@ -6,7 +6,10 @@ import {
   ArrowRight,
   BookOpen,
   KeyRound,
+  Layers,
   Lock,
+  Network,
+  Scissors,
   Shield,
   ShieldCheck,
   Sparkles,
@@ -25,7 +28,25 @@ export default function Home() {
     <>
       <SiteNav />
       <main className="relative min-h-screen bg-hero-radial">
-        <section className="mx-auto max-w-5xl px-6 pb-12 pt-12 text-center sm:pt-20">
+        {/* What's new ticker */}
+        <div className="border-b border-white/5 bg-gradient-to-r from-rose-500/5 via-accent/10 to-accent-cyan/5">
+          <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-6 py-2 text-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/30 bg-rose-400/15 px-2 py-0.5 font-bold uppercase tracking-wider text-rose-300">
+              <Zap className="h-3 w-3" /> New
+            </span>
+            <span className="text-ink-dim">
+              <strong className="text-ink">Prompt Chunker</strong> — split long text and decompose complex tasks for any LLM.
+            </span>
+            <Link
+              href="/chunker"
+              className="inline-flex items-center gap-1 font-medium text-accent-glow transition hover:text-accent"
+            >
+              Try it <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+
+        <section className="mx-auto max-w-5xl px-6 pb-10 pt-12 text-center sm:pt-20">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-ink-dim">
             <Zap className="h-3 w-3 text-accent-glow" />
             Free · 100% browser-only · Nothing leaves your laptop
@@ -41,17 +62,17 @@ export default function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-ink-dim sm:text-lg">
-            Millions of people paste logs, API keys, JWTs, customer data, and
-            credentials into ChatGPT — without realising the risk. FixAIPrompt
-            is the <strong className="text-ink">privacy layer for AI</strong>:
-            optimize the prompt, redact the dangerous bits.
+            The <strong className="text-ink">privacy layer for AI</strong>. Optimize prompts with task-aware rewriting, redact API keys and PII before pasting, chunk huge inputs to fit any model, and steal from battle-tested templates — all in one browser tab.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href="/safe-paste" className="btn-ghost">
-              <Shield className="h-4 w-4" /> Try Safe Paste
+              <Shield className="h-4 w-4" /> Safe Paste
+            </Link>
+            <Link href="/chunker" className="btn-ghost">
+              <Scissors className="h-4 w-4" /> Chunker
             </Link>
             <Link href="/templates" className="btn-ghost">
-              <BookOpen className="h-4 w-4" /> Browse templates
+              <BookOpen className="h-4 w-4" /> Templates
             </Link>
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-ink-dim">
@@ -64,18 +85,25 @@ export default function Home() {
             </span>
             <span className="text-ink-fade">·</span>
             <span className="inline-flex items-center gap-1.5">
-              <KeyRound className="h-3.5 w-3.5 text-accent-glow" /> Your API key stays local
+              <KeyRound className="h-3.5 w-3.5 text-accent-glow" /> No signup, no API keys
             </span>
           </div>
 
           <HomePromptHero />
         </section>
 
+        <SectionDivider />
+
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-8 text-center">
+            <h2 className="text-balance text-2xl font-bold sm:text-3xl">Four tools. One mission.</h2>
+            <p className="mt-2 text-ink-dim">Keep your data safe. Get better answers. Ship faster.</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             <ToolCard
               href="/safe-paste"
               accent="from-rose-500/20 via-orange-500/10 to-amber-500/10"
+              ring="ring-rose-400/20"
               icon={<Shield className="h-6 w-6" />}
               tag="Safe Paste"
               title="Mask secrets before they hit AI."
@@ -85,15 +113,28 @@ export default function Home() {
             <ToolCard
               href="/fix"
               accent="from-violet-500/20 via-fuchsia-500/10 to-cyan-500/10"
+              ring="ring-accent/20"
               icon={<Sparkles className="h-6 w-6" />}
               tag="Prompt Fixer"
-              title="Better prompts in one click."
-              body="A linter for prompts: flags vague verbs, missing format, contradictions, weak language. Then rewrites for Claude, GPT, Gemini, Cursor, or Copilot."
+              title="Task-aware prompt rewriting."
+              body="A linter for prompts plus task-type detection (Code / Writing / Analysis / Decision / …) that adapts role, format, and example to each task. No API key needed."
               cta="Open Prompt Fixer"
+            />
+            <ToolCard
+              href="/chunker"
+              accent="from-cyan-500/20 via-sky-500/10 to-emerald-500/10"
+              ring="ring-cyan-400/20"
+              icon={<Scissors className="h-6 w-6" />}
+              tag="Chunker · New"
+              title="Split big inputs. Decompose hard asks."
+              body="Two browser-only tools. Chunk long text into model-ready pieces for ChatGPT / Claude / Gemini, or decompose a complex prompt into a chain of focused sub-prompts."
+              cta="Open Chunker"
+              newBadge
             />
             <ToolCard
               href="/templates"
               accent="from-emerald-500/20 via-teal-500/10 to-sky-500/10"
+              ring="ring-emerald-400/20"
               icon={<BookOpen className="h-6 w-6" />}
               tag="Templates"
               title="Steal prompts that actually work."
@@ -103,33 +144,38 @@ export default function Home() {
           </div>
         </section>
 
+        <SectionDivider />
+
         <section id="how" className="mx-auto max-w-5xl px-6 py-16">
-          <h2 className="text-center text-2xl font-bold sm:text-3xl">
-            How FixAIPrompt protects you
-          </h2>
-          <p className="mt-2 text-center text-ink-dim">
-            One workflow. Two checks. No data leaves your browser.
-          </p>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mb-10 text-center">
+            <h2 className="text-balance text-2xl font-bold sm:text-3xl">How FixAIPrompt protects you</h2>
+            <p className="mt-2 text-ink-dim">One workflow. Three checks. No data leaves your browser.</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
             <Step
               n={1}
-              title="Lint the prompt"
-              body="The rules engine catches lazy phrasing, missing structure, hallucination triggers, and contradictions in your actual ask."
+              icon={<Sparkles className="h-4 w-4 text-accent-glow" />}
+              title="Lint & rewrite the prompt"
+              body="Multi-metric scoring (clarity / context / structure / specificity / risk) plus task-aware rewriting catches lazy phrasing, missing structure, and contradictions."
             />
             <Step
               n={2}
+              icon={<Shield className="h-4 w-4 text-rose-300" />}
               title="Scan the data"
-              body="A regex + entropy detector spots 30+ types of secrets and PII you didn't mean to share. Output highlighted, masked, and ready to copy."
+              body="A regex + entropy detector spots 30+ types of secrets and PII before you paste. Highlighted, masked, copy-ready output."
             />
             <Step
               n={3}
-              title="Paste with confidence"
-              body="Send the rewritten, redacted version to ChatGPT, Claude, Gemini, Cursor, or Copilot. The unsafe original never crossed the wire."
+              icon={<Layers className="h-4 w-4 text-cyan-300" />}
+              title="Chunk what's too big"
+              body="Long transcripts, contracts, and documents get split into model-ready chunks. Complex prompts get decomposed into focused chains."
             />
           </div>
         </section>
 
-        <section className="mx-auto max-w-5xl px-6 pb-16">
+        <SectionDivider />
+
+        <section className="mx-auto max-w-5xl px-6 py-12">
           <div className="card relative overflow-hidden p-6 sm:p-10">
             <div className="absolute inset-0 -z-10 bg-gradient-to-br from-rose-500/10 via-transparent to-accent/10" />
             <h2 className="text-balance text-2xl font-bold sm:text-3xl">
@@ -137,12 +183,9 @@ export default function Home() {
             </h2>
             <p className="mt-3 max-w-2xl text-balance text-ink-dim">
               Generic prompt tools are everywhere. The real wedge is{" "}
-              <strong className="text-ink">
-                AI Data Loss Prevention
-              </strong>
-              : the layer that keeps developers, students, teachers, and whole
-              companies from accidentally leaking real-world data into chat
-              boxes. That&apos;s us.
+              <strong className="text-ink">AI Data Loss Prevention</strong>: the layer
+              that keeps developers, students, teachers, and whole companies from
+              accidentally leaking real-world data into chat boxes. That&apos;s us.
             </p>
             <ul className="mt-6 grid gap-4 text-sm text-ink-dim sm:grid-cols-2">
               <Bullet>For developers — paste logs, stack traces, and API responses without exposing tokens.</Bullet>
@@ -153,28 +196,37 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="faq" className="mx-auto max-w-3xl px-6 pb-24">
-          <h2 className="text-center text-2xl font-bold sm:text-3xl">FAQ</h2>
-          <div className="mt-8 space-y-4">
+        <SectionDivider />
+
+        <section id="faq" className="mx-auto max-w-3xl px-6 pb-24 pt-8">
+          <div className="mb-8 text-center">
+            <h2 className="text-balance text-2xl font-bold sm:text-3xl">FAQ</h2>
+            <p className="mt-2 text-ink-dim">The questions we hear most.</p>
+          </div>
+          <div className="space-y-4">
             <Faq
               q="Is FixAIPrompt free?"
-              a="Yes — the linter, detector, masker, and templates are 100% free. The optional AI rewriter uses your own Anthropic API key, so you pay Anthropic directly for those tokens. We charge nothing."
+              a="Yes — the linter, detector, masker, chunker, decomposer, and templates are 100% free. Nothing is gated. We don't charge anyone."
             />
             <Faq
               q="Where does my data go?"
-              a="Nowhere. Detection, masking, and linting all run as JavaScript in your browser. There is no server-side processing — we cannot see what you paste because we never receive it."
+              a="Nowhere. Detection, masking, linting, chunking, and decomposition all run as JavaScript in your browser. There is no server-side processing — we cannot see what you paste because we never receive it."
             />
             <Faq
               q="What does the detector catch?"
               a="30+ patterns: AWS / OpenAI / Anthropic / GitHub / Stripe / Slack / Google / SendGrid keys, JWTs, bearer tokens, private key blocks, Mongo / Postgres / MySQL / Redis URIs, .env-style lines, emails, phone numbers, SSNs, Aadhaar, credit cards (Luhn-validated), IPv4/IPv6 — plus an entropy fallback for unknown secrets."
             />
             <Faq
+              q="What models does the chunker support?"
+              a="9 presets: GPT-3.5 16k, GPT-4 8k, GPT-4 Turbo 128k, Claude Haiku 200k, Claude Sonnet 200k, Claude Opus 1M, Gemini 1.5 Pro 1M, Llama 3 8k, Mistral Large 32k, plus a custom mode. Chunk size is pre-filled to a sensible default per model and you can override it."
+            />
+            <Faq
               q="Can my team get this?"
               a="Yes — we're building an enterprise version (browser extension + team rules + audit logs). If your team is interested, the same client-side detection moves into a Chrome extension that scans the clipboard before paste."
             />
             <Faq
-              q="What models do you optimize prompts for?"
-              a="Claude, ChatGPT/GPT-4, Gemini, Cursor, Copilot, and a generic model-agnostic mode. The Prompt Fixer adapts structure and phrasing to each."
+              q="What models does the Prompt Fixer optimize for?"
+              a="Claude, ChatGPT/GPT-4, Gemini, and a model-agnostic Plain mode. The auto-fixer renders each prompt in the syntax that model handles best — XML for Claude, markdown for GPT, bulleted for Gemini, prose for everything else."
             />
           </div>
         </section>
@@ -184,29 +236,44 @@ export default function Home() {
   );
 }
 
+function SectionDivider() {
+  return (
+    <div className="mx-auto h-px max-w-6xl bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+  );
+}
+
 function ToolCard({
   href,
   accent,
+  ring,
   icon,
   tag,
   title,
   body,
   cta,
+  newBadge,
 }: {
   href: string;
   accent: string;
+  ring: string;
   icon: React.ReactNode;
   tag: string;
   title: string;
   body: string;
   cta: string;
+  newBadge?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className="card group relative flex flex-col overflow-hidden p-6 transition hover:border-accent/40"
+      className={`card group relative flex flex-col overflow-hidden p-6 transition hover:border-accent/40 hover:translate-y-[-2px] ${ring}`}
     >
       <div className={`absolute inset-0 -z-10 bg-gradient-to-br opacity-50 transition group-hover:opacity-100 ${accent}`} />
+      {newBadge && (
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-rose-400/30 bg-rose-400/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-300">
+          <Zap className="h-2.5 w-2.5" /> New
+        </span>
+      )}
       <div className="mb-3 flex items-center gap-2">
         <span className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-ink ring-1 ring-white/10">
           {icon}
@@ -224,11 +291,16 @@ function ToolCard({
   );
 }
 
-function Step({ n, title, body }: { n: number; title: string; body: string }) {
+function Step({ n, icon, title, body }: { n: number; icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="card p-6">
-      <div className="mb-3 grid h-8 w-8 place-items-center rounded-lg bg-accent/15 text-sm font-semibold text-accent-glow ring-1 ring-accent/30">
-        {n}
+    <div className="card group p-6 transition hover:border-white/15">
+      <div className="mb-3 flex items-center gap-2">
+        <div className="grid h-8 w-8 place-items-center rounded-lg bg-accent/15 text-sm font-semibold text-accent-glow ring-1 ring-accent/30">
+          {n}
+        </div>
+        <div className="grid h-7 w-7 place-items-center rounded-lg bg-white/5 ring-1 ring-white/10">
+          {icon}
+        </div>
       </div>
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-ink-dim">{body}</p>

@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE}/fix`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/safe-paste`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/chunker`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/safe-chatgpt-paste`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/mask-api-keys`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
