@@ -1,19 +1,48 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, Copy, Minus, Pencil, Plus, Sparkles } from "lucide-react";
-import { improvePromptLocal, type Insight } from "@/lib/autoFix";
+import {
+  CheckCircle2,
+  Copy,
+  Minus,
+  Pencil,
+  Plus,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
+import {
+  improvePrompt,
+  renderForModel,
+  TASK_TYPE_BLURB,
+  TASK_TYPE_EMOJI,
+  TASK_TYPE_LABEL,
+  type Insight,
+  type TargetModel,
+} from "@/lib/autoFix";
 import { METRIC_LABEL, type Metric } from "@/lib/linter";
 
-export function PromptImprovement({
-  prompt,
-  compact = false,
-}: {
-  prompt: string;
-  compact?: boolean;
-}) {
+const MODEL_TABS: { value: TargetModel; label: string; hint: string }[] = [
+  { value: "claude", label: "Claude", hint: "XML-tagged sections, anthropic-style" },
+  { value: "gpt", label: "ChatGPT", hint: "Markdown headings, system-style role" },
+  { value: "gemini", label: "Gemini", hint: "Tight bulleted instructions" },
+  { value: "plain", label: "Plain", hint: "Works for any chat LLM" },
+];
+
+const STORAGE_KEY_MODEL = "fixaiprompt.outputModel";
+
+export function PromptImprovement({ prompt }: { prompt: string }) {
   const [copied, setCopied] = useState(false);
-  const result = useMemo(() => improvePromptLocal(prompt), [prompt]);
+  const [model, setModel] = useState<TargetModel>(() => {
+    if (typeof window === "undefined") return "claude";
+    return (localStorage.getItem(STORAGE_KEY_MODEL) as TargetModel) || "claude";
+  });
+  const [showExample, setShowExample] = useState(true);
+
+  const result = useMemo(() => improvePrompt(prompt), [prompt]);
+  const improved = useMemo(
+    () => renderForModel(result, model),
+    [result, model]
+  );
 
   if (!prompt.trim()) return null;
   if (!result.changed && result.insights.length === 0) {
@@ -25,59 +54,184 @@ export function PromptImprovement({
     );
   }
 
+  function pickModel(m: TargetModel) {
+    setModel(m);
+    try { localStorage.setItem(STORAGE_KEY_MODEL, m); } catch {}
+  }
+
   async function copy() {
     try {
-      await navigator.clipboard.writeText(result.improved);
+      await navigator.clipboard.writeText(improved);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {}
   }
 
   return (
-    <div className={`grid gap-4 ${compact ? "" : "lg:grid-cols-5"}`}>
-      <div className={`card overflow-hidden ${compact ? "" : "lg:col-span-3"}`}>
-        <div className="flex items-center justify-between border-b border-accent/20 bg-accent/10 px-4 py-2.5">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent-glow">
-            <Sparkles className="h-3.5 w-3.5" />
-            Corrected prompt
-          </span>
-          <button
-            type="button"
-            onClick={copy}
-            className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-ink-dim transition hover:bg-white/10 hover:text-ink"
-            data-testid="copy-improved"
-          >
-            {copied ? (
-              <>
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Copied
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" /> Copy
-              </>
-            )}
-          </button>
+    <div className="space-y-4">
+      <ScoreJumpAndTaskCard
+        scoreBefore={result.scoreBefore}
+        scoreAfter={result.scoreAfter}
+        taskType={result.taskType}
+        topic={result.topic}
+      />
+
+      <div className="grid gap-4 lg:grid-cols-5">
+        <div className="card overflow-hidden lg:col-span-3">
+          <div className="border-b border-accent/20 bg-accent/10">
+            <div className="flex items-center justify-between px-4 py-2">
+              <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent-glow">
+                <Sparkles className="h-3.5 w-3.5" />
+                Corrected prompt
+              </span>
+              <button
+                type="button"
+                onClick={copy}
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-ink-dim transition hover:bg-white/10 hover:text-ink"
+                data-testid="copy-improved"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5" /> Copy for {modelShort(model)}
+                  </>
+                )}
+              </button>
+            </div>
+            <ModelTabs value={model} onChange={pickModel} />
+          </div>
+          <pre className="max-h-[480px] overflow-auto p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap text-ink">
+            {improved}
+          </pre>
+          {result.sections.example && (
+            <div className="border-t border-white/5 bg-white/[0.02] px-4 py-2 text-xs text-ink-fade">
+              <button
+                type="button"
+                onClick={() => setShowExample((v) => !v)}
+                className="inline-flex items-center gap-1 transition hover:text-ink"
+              >
+                {showExample ? "Hide" : "Show"} generated example shape
+              </button>
+            </div>
+          )}
         </div>
-        <pre className="max-h-[420px] overflow-auto p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap text-ink">
-          {result.improved}
-        </pre>
+
+        <div className="card p-4 sm:p-5 lg:col-span-2">
+          <div className="mb-3 flex items-baseline justify-between">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-dim">
+              Insights
+            </h3>
+            <span className="text-xs text-ink-fade">
+              {result.insights.length} change
+              {result.insights.length === 1 ? "" : "s"}
+            </span>
+          </div>
+          <ul className="space-y-2.5">
+            {result.insights.map((insight, i) => (
+              <InsightRow key={i} insight={insight} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function modelShort(m: TargetModel): string {
+  switch (m) {
+    case "claude": return "Claude";
+    case "gpt": return "ChatGPT";
+    case "gemini": return "Gemini";
+    default: return "any LLM";
+  }
+}
+
+function ModelTabs({ value, onChange }: { value: TargetModel; onChange: (m: TargetModel) => void }) {
+  return (
+    <div className="flex border-t border-white/5 bg-bg-soft/40 text-xs">
+      {MODEL_TABS.map((tab) => {
+        const active = value === tab.value;
+        return (
+          <button
+            key={tab.value}
+            onClick={() => onChange(tab.value)}
+            className={`flex-1 border-r border-white/5 px-3 py-2 transition last:border-r-0 ${
+              active
+                ? "bg-accent/15 text-accent-glow"
+                : "text-ink-dim hover:bg-white/5 hover:text-ink"
+            }`}
+            title={tab.hint}
+            data-testid={`model-tab-${tab.value}`}
+          >
+            <span className="font-medium">{tab.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function ScoreJumpAndTaskCard({
+  scoreBefore,
+  scoreAfter,
+  taskType,
+  topic,
+}: {
+  scoreBefore: number;
+  scoreAfter: number;
+  taskType: ReturnType<typeof improvePrompt>["taskType"];
+  topic: string;
+}) {
+  const delta = scoreAfter - scoreBefore;
+  const pct = scoreBefore > 0 ? Math.round((delta / Math.max(scoreBefore, 1)) * 100) : null;
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      <div className="card relative overflow-hidden p-4">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-400/15 via-transparent to-accent/10" />
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-ink-dim">
+            <TrendingUp className="h-3.5 w-3.5 text-emerald-300" />
+            Predicted score jump
+          </span>
+          {delta > 0 && (
+            <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+              +{delta} pts{pct !== null && Number.isFinite(pct) ? ` · +${pct}%` : ""}
+            </span>
+          )}
+        </div>
+        <div className="mt-2 flex items-baseline gap-3 text-2xl font-bold">
+          <span className={scoreBefore < 50 ? "text-rose-300" : scoreBefore < 80 ? "text-amber-300" : "text-emerald-300"}>
+            {scoreBefore}
+          </span>
+          <span className="text-ink-fade">→</span>
+          <span className={scoreAfter < 50 ? "text-rose-300" : scoreAfter < 80 ? "text-amber-300" : "text-emerald-300"}>
+            {scoreAfter}
+          </span>
+          <span className="ml-1 text-sm text-ink-fade">/100</span>
+        </div>
+        <p className="mt-1 text-xs text-ink-fade">
+          Same linter, applied to the rewritten prompt. Higher is better.
+        </p>
       </div>
 
-      <div className={`card p-4 sm:p-5 ${compact ? "" : "lg:col-span-2"}`}>
-        <div className="mb-3 flex items-baseline justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-dim">
-            Insights
-          </h3>
-          <span className="text-xs text-ink-fade">
-            {result.insights.length} change
-            {result.insights.length === 1 ? "" : "s"}
-          </span>
+      <div className="card relative overflow-hidden p-4">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/15 via-transparent to-accent-cyan/10" />
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-ink-dim">
+          Detected task
+        </span>
+        <div className="mt-2 flex items-center gap-2">
+          <span className="text-2xl">{TASK_TYPE_EMOJI[taskType]}</span>
+          <span className="text-lg font-semibold text-ink">{TASK_TYPE_LABEL[taskType]}</span>
         </div>
-        <ul className="space-y-2.5">
-          {result.insights.map((insight, i) => (
-            <InsightRow key={i} insight={insight} />
-          ))}
-        </ul>
+        <p className="mt-1 text-xs text-ink-fade">{TASK_TYPE_BLURB[taskType]}</p>
+        {topic && (
+          <p className="mt-2 truncate text-xs text-accent-glow" title={topic}>
+            Topic: {topic}
+          </p>
+        )}
       </div>
     </div>
   );
