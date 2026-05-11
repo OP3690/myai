@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { improvePrompt } from "@/lib/autoFix";
 import { lintPrompt } from "@/lib/linter";
 import { MetricBreakdown } from "./MetricBreakdown";
 import { PromptImprovement } from "./PromptImprovement";
+import { SharePromptFix } from "./SharePromptFix";
 
 const PLACEHOLDER =
   "Paste your prompt — e.g. \"help me learn coding\" or \"write a blog post about AI\"";
@@ -23,6 +25,7 @@ const SAMPLES: { label: string; text: string }[] = [
 export function HomePromptHero() {
   const [prompt, setPrompt] = useState<string>("");
   const report = useMemo(() => lintPrompt(prompt), [prompt]);
+  const improved = useMemo(() => (prompt.trim() ? improvePrompt(prompt) : null), [prompt]);
   const hasContent = report.stats.words > 0;
 
   return (
@@ -92,6 +95,14 @@ export function HomePromptHero() {
       </div>
 
       {hasContent && <PromptImprovement prompt={prompt} />}
+
+      {hasContent && improved && (
+        <SharePromptFix
+          scoreBefore={improved.scoreBefore}
+          scoreAfter={improved.scoreAfter}
+          taskType={improved.taskType}
+        />
+      )}
     </div>
   );
 }

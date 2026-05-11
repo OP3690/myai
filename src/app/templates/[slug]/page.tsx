@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { CATEGORY_EMOJI, CATEGORY_LABEL, TEMPLATES, getTemplate } from "@/lib/templates";
-import { TemplateActions } from "@/components/TemplateActions";
+import { TemplateFiller } from "@/components/TemplateFiller";
 import { ArrowLeft, Flame, Lightbulb, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -71,26 +71,24 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
             ))}
           </div>
 
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            <div className="card overflow-hidden">
-              <div className="border-b border-white/5 bg-white/[0.02] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-ink-fade">
+          <div className="mt-10">
+            <TemplateFiller slug={t.slug} betterPrompt={t.betterPrompt} />
+          </div>
+
+          <details className="card mt-6 group p-5 sm:p-6">
+            <summary className="cursor-pointer list-none text-sm font-medium text-ink-dim transition hover:text-ink">
+              <span className="mr-2 text-accent-glow">›</span>
+              See the lazy version this template replaces
+            </summary>
+            <div className="mt-3 rounded-lg border border-white/5 bg-white/[0.02] p-3">
+              <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-rose-300">
                 Before — the lazy prompt
               </div>
-              <pre className="max-h-[420px] overflow-auto p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap text-ink-dim">
+              <pre className="font-mono text-sm leading-relaxed whitespace-pre-wrap text-ink-dim">
                 {t.beforePrompt}
               </pre>
             </div>
-            <div className="card overflow-hidden ring-1 ring-accent/30">
-              <div className="border-b border-accent/20 bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-accent-glow">
-                After — better prompt
-              </div>
-              <pre className="max-h-[420px] overflow-auto p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap text-ink">
-                {t.betterPrompt}
-              </pre>
-            </div>
-          </div>
-
-          <TemplateActions prompt={t.betterPrompt} />
+          </details>
 
           <div className="card mt-8 p-5 sm:p-6">
             <h2 className="inline-flex items-center gap-2 text-base font-semibold">

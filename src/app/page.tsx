@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { HomePromptHero } from "@/components/HomePromptHero";
+import { TechniqueOfTheDay } from "@/components/TechniqueOfTheDay";
 import {
   ArrowRight,
   BookOpen,
@@ -146,6 +147,10 @@ export default function Home() {
             />
           </div>
         </section>
+
+        <SectionDivider />
+
+        <TechniqueOfTheDay />
 
         <SectionDivider />
 
