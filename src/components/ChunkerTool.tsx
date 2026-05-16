@@ -49,7 +49,21 @@ const STORAGE_KEY_MODE = "fixaiprompt.chunker.mode";
 
 export function ChunkerTool() {
   const [mode, setMode] = useState<Mode>("split");
+  const [handoff, setHandoff] = useState<{ text: string; modelId: string } | null>(null);
   useEffect(() => {
+    // Pick up the homepage hand-off first — overrides any saved mode preference.
+    try {
+      const raw = sessionStorage.getItem("fixaiprompt.chunker.handoff");
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p && typeof p.text === "string") {
+          setHandoff({ text: p.text, modelId: typeof p.modelId === "string" ? p.modelId : "claude-sonnet" });
+          if (p.mode === "split" || p.mode === "decompose") setMode(p.mode);
+          sessionStorage.removeItem("fixaiprompt.chunker.handoff");
+          return;
+        }
+      }
+    } catch {}
     try {
       const m = localStorage.getItem(STORAGE_KEY_MODE) as Mode | null;
       if (m === "split" || m === "decompose") setMode(m);
@@ -63,7 +77,11 @@ export function ChunkerTool() {
   return (
     <div className="space-y-6">
       <ModeTabs mode={mode} onChange={pickMode} />
-      {mode === "split" ? <TextChunker /> : <TaskDecomposer />}
+      {mode === "split" ? (
+        <TextChunker initialText={handoff?.text} initialModelId={handoff?.modelId} />
+      ) : (
+        <TaskDecomposer initialText={handoff?.text} />
+      )}
     </div>
   );
 }
@@ -104,9 +122,16 @@ function ModeTabs({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void 
 
 // ─── Text chunker ──────────────────────────────────────────────────────────
 
-function TextChunker() {
-  const [text, setText] = useState<string>("");
+function TextChunker({
+  initialText,
+  initialModelId,
+}: {
+  initialText?: string;
+  initialModelId?: string;
+}) {
+  const [text, setText] = useState<string>(initialText ?? "");
   const [modelId, setModelId] = useState<string>(() => {
+    if (initialModelId) return initialModelId;
     if (typeof window === "undefined") return "claude-sonnet";
     return localStorage.getItem(STORAGE_KEY_MODEL) || "claude-sonnet";
   });
@@ -371,8 +396,8 @@ function Stat({
 
 // ─── Task decomposer ───────────────────────────────────────────────────────
 
-function TaskDecomposer() {
-  const [prompt, setPrompt] = useState<string>("");
+function TaskDecomposer({ initialText }: { initialText?: string }) {
+  const [prompt, setPrompt] = useState<string>(initialText ?? "");
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
 

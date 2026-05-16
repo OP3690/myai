@@ -170,6 +170,10 @@ const STAGE_VERBS = {
   format: /\b(format|export|render|publish|ship|deliver)\b/i,
 };
 
+export function detectComplexityHint(prompt: string): { isComplex: boolean; reasons: string[] } {
+  return detectComplexity(prompt);
+}
+
 function detectComplexity(prompt: string): { isComplex: boolean; reasons: string[] } {
   const reasons: string[] = [];
   const t = prompt.trim();

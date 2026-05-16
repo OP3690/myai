@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { HomePromptHero } from "@/components/HomePromptHero";
+import { HomeChunkerHero } from "@/components/HomeChunkerHero";
 import { TechniqueOfTheDay } from "@/components/TechniqueOfTheDay";
 import {
   ArrowRight,
@@ -94,6 +95,8 @@ export default function Home() {
           </div>
 
           <HomePromptHero />
+
+          <HomeChunkerHero />
         </section>
 
         <SectionDivider />
