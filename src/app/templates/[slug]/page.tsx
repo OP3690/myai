@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { CATEGORY_EMOJI, CATEGORY_LABEL, TEMPLATES, getTemplate } from "@/lib/templates";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { TemplateFiller } from "@/components/TemplateFiller";
 import { ArrowLeft, Flame, Lightbulb, Zap } from "lucide-react";
 
@@ -43,9 +44,12 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
             <span>·</span>
             <span>Works on: {t.platforms.join(", ")}</span>
           </div>
-          <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
-            {t.title}
-          </h1>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+              {t.title}
+            </h1>
+            <FavoriteButton kind="templates" slug={t.slug} variant="chip" />
+          </div>
           {t.technique && (
             <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-violet-300">
               <Zap className="h-3 w-3" />

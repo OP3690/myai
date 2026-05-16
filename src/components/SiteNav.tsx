@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sparkles, Shield, BookOpen, Scissors } from "lucide-react";
 import { StreakBadge } from "./StreakBadge";
+import { CommandPaletteTrigger } from "./CommandPalette";
 
 const LINKS = [
   { href: "/fix", label: "Prompt Fixer", icon: Sparkles },
@@ -26,7 +27,8 @@ export function SiteNav() {
           </span>
           <StreakBadge />
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="flex items-center gap-1.5 text-sm">
+          <CommandPaletteTrigger />
           {LINKS.map(({ href, label, icon: Icon, isNew }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (

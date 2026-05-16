@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GLOSSARY, getGlossary } from "@/lib/glossary";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, XCircle, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -42,9 +43,12 @@ export default function GlossaryDetailPage({ params }: { params: { slug: string 
             <BookOpen className="h-3 w-3 text-accent-glow" />
             Glossary · Technique
           </div>
-          <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
-            {g.term}
-          </h1>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+              {g.term}
+            </h1>
+            <FavoriteButton kind="glossary" slug={g.slug} variant="chip" />
+          </div>
           {g.alsoKnownAs && g.alsoKnownAs.length > 0 && (
             <p className="mt-2 text-sm text-ink-fade">
               Also known as: {g.alsoKnownAs.join(", ")}

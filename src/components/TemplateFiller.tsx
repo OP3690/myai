@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Copy,
   Eye,
+  Link2,
   Maximize2,
   Minimize2,
   Pencil,
@@ -214,11 +215,26 @@ export function TemplateFiller({
   const [values, setValues] = useState<Record<string, string>>({});
   const [focusKey, setFocusKey] = useState<string | undefined>();
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [fullPreview, setFullPreview] = useState(false);
   const fieldRefs = useRef<Record<string, HTMLTextAreaElement | HTMLInputElement | null>>({});
 
   const storageKey = `fixaiprompt.template.${slug}`;
   useEffect(() => {
+    // First try: read shareable values from URL hash (#fill=...) — takes priority over localStorage.
+    if (typeof window !== "undefined" && window.location.hash) {
+      try {
+        const m = window.location.hash.match(/[#&]fill=([^&]+)/);
+        if (m && m[1]) {
+          const decoded = atob(decodeURIComponent(m[1]).replace(/-/g, "+").replace(/_/g, "/"));
+          const parsed = JSON.parse(decoded);
+          if (parsed && typeof parsed === "object") {
+            setValues(parsed);
+            return;
+          }
+        }
+      } catch {}
+    }
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) setValues(JSON.parse(raw));
@@ -258,6 +274,21 @@ export function TemplateFiller({
       await navigator.clipboard.writeText(filled);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  }
+
+  async function copyShareLink() {
+    if (typeof window === "undefined") return;
+    try {
+      // Build a URL-safe base64 of the filled values and put them on the page hash.
+      const json = JSON.stringify(values);
+      const b64 = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      const url = `${window.location.origin}${window.location.pathname}#fill=${b64}`;
+      await navigator.clipboard.writeText(url);
+      // Also update the URL so a refresh keeps the state
+      window.history.replaceState(null, "", `#fill=${b64}`);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1500);
     } catch {}
   }
 
@@ -337,6 +368,23 @@ export function TemplateFiller({
             data-testid="fill-sample"
           >
             <Wand2 className="h-3.5 w-3.5" /> Try with sample values
+          </button>
+          <button
+            type="button"
+            onClick={copyShareLink}
+            disabled={filledCount === 0}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-200 transition hover:bg-cyan-400/20 disabled:opacity-40"
+            title="Anyone with this link sees your filled prompt"
+          >
+            {linkCopied ? (
+              <>
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Link copied
+              </>
+            ) : (
+              <>
+                <Link2 className="h-3.5 w-3.5" /> Copy share link
+              </>
+            )}
           </button>
           <button
             type="button"

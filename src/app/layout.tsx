@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { CommandPalette } from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fixaiprompt.com"),
@@ -49,7 +50,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        {children}
+        <CommandPalette />
+      </body>
     </html>
   );
 }
