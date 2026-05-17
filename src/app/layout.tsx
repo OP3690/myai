@@ -41,6 +41,9 @@ export const metadata: Metadata = {
       "The privacy layer for AI. Mask secrets before pasting into ChatGPT or Claude.",
   },
   robots: { index: true, follow: true },
+  verification: {
+    google: "92yHC6RoKppsBrxkUZUS2izV8H6K-Ff6fD5wQ0POUuA",
+  },
 };
 
 export default function RootLayout({
