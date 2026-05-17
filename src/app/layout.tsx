@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { CommandPalette } from "@/components/CommandPalette";
+
+const GA_MEASUREMENT_ID = "G-HBSX0Q2WGT";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fixaiprompt.com"),
@@ -56,6 +59,19 @@ export default function RootLayout({
       <body className="font-sans">
         {children}
         <CommandPalette />
+        {/* Google Analytics 4 — loaded after page is interactive so it doesn't block paint. */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
