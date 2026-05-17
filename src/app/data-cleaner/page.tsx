@@ -4,9 +4,22 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Database, Lock, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "CSV / JSON PII Stripper — Remove sensitive columns before sharing data",
+  title:
+    "CSV / JSON PII Stripper — Mask Data Before ChatGPT, Claude or Gemini",
   description:
-    "Paste a CSV or JSON. Auto-detect PII columns (email, phone, name, SSN, address, secrets) and download a redacted version. 100% in-browser — your dataset never leaves your laptop.",
+    "Free CSV and JSON PII redaction. Paste a dataset, auto-detect 11 PII column types (email, phone, name, SSN, Aadhaar, credit card, IP, address, DOB, secrets), toggle which to mask, and download the cleaned file. 100% in-browser.",
+  keywords: [
+    "csv pii stripper",
+    "json pii stripper",
+    "remove pii from csv",
+    "remove pii from json",
+    "data redaction",
+    "data cleaner",
+    "csv anonymizer",
+    "ssn mask csv",
+    "email mask json",
+    "ai-safe dataset",
+  ],
   alternates: { canonical: "/data-cleaner" },
 };
 

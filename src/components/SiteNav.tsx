@@ -60,7 +60,7 @@ export function SiteNav() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-white/5">
-      <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 text-sm sm:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 text-sm sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <div className="flex items-center gap-2">
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-accent/20 ring-1 ring-accent/40">
@@ -84,6 +84,16 @@ export function SiteFooter() {
             { href: "/prompt-diff", label: "Prompt Diff" },
             { href: "/templates", label: "Prompt Templates" },
             { href: "/glossary", label: "Glossary" },
+          ]}
+        />
+        <FooterCol
+          title="Prompts by model"
+          links={[
+            { href: "/chatgpt-prompts", label: "ChatGPT prompts" },
+            { href: "/claude-prompts", label: "Claude prompts" },
+            { href: "/gemini-prompts", label: "Gemini prompts" },
+            { href: "/grok-prompts", label: "Grok prompts" },
+            { href: "/ai-prompt-generator", label: "AI prompt generator" },
           ]}
         />
         <FooterCol

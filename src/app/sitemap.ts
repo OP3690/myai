@@ -15,6 +15,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/prompt-diff`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE}/templates`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/glossary`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    // High-volume keyword landing pages
+    { url: `${BASE}/ai-prompt-generator`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${BASE}/chatgpt-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${BASE}/claude-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${BASE}/gemini-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
+    { url: `${BASE}/grok-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/safe-chatgpt-paste`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/mask-api-keys`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/sanitize-logs-for-ai`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },

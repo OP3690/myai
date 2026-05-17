@@ -6,9 +6,23 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Shield, Lock, EyeOff, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Safe Paste — Detect & mask secrets before pasting into AI",
+  title:
+    "Safe Paste for ChatGPT, Claude & Gemini — Mask API Keys, JWTs & PII",
   description:
-    "Paste logs, JSON, SQL, or API responses. We detect API keys, JWTs, PII, credentials, and database secrets — and mask them before you send them to ChatGPT, Claude, or any AI. 100% client-side.",
+    "Free secret scanner for any text you paste into ChatGPT, Claude, Gemini, or Grok. Detects 30+ API keys, JWTs, private keys, database URIs, and PII — and gives you a redacted version with an AI Leak Score. 100% browser-only.",
+  keywords: [
+    "safe paste",
+    "chatgpt safe paste",
+    "claude safe paste",
+    "ai secret scanner",
+    "mask api keys",
+    "redact pii",
+    "jwt detector",
+    "remove secrets before ai",
+    "ai data loss prevention",
+    "openai key scanner",
+    "anthropic key scanner",
+  ],
   alternates: { canonical: "/safe-paste" },
 };
 

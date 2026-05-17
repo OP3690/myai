@@ -5,9 +5,25 @@ import { TEMPLATES } from "@/lib/templates";
 import { BookOpen } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Prompt Templates — Advanced techniques + before/after for ChatGPT, Claude, Gemini",
+  title:
+    "58 AI Prompt Templates — Best Prompts for ChatGPT, Claude, Gemini & Grok",
   description:
-    "Curated prompt-engineering templates including advanced techniques (Chain-of-Thought, Tree-of-Thoughts, Self-Refine, Multi-Persona, Pre-Mortem). Each shows the lazy prompt, the better prompt, and why it works.",
+    "58 hand-curated AI prompt templates with interactive fill-in fields, including 27 advanced techniques (Chain-of-Thought, Tree-of-Thoughts, Self-Refine, ReAct, Multi-Persona, Pre-Mortem, Adversarial Red-Team). Free, no signup, copy-paste ready for any LLM.",
+  keywords: [
+    "ai prompt templates",
+    "chatgpt prompts",
+    "claude prompts",
+    "gemini prompts",
+    "grok prompts",
+    "best ai prompts",
+    "best chatgpt prompts",
+    "prompt library",
+    "prompt examples",
+    "chain of thought template",
+    "tree of thoughts template",
+    "self-refine template",
+    "react agent template",
+  ],
   alternates: { canonical: "/templates" },
 };
 

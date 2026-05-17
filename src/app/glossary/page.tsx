@@ -5,9 +5,27 @@ import { GLOSSARY } from "@/lib/glossary";
 import { ArrowRight, BookOpen, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Prompt Engineering Glossary — Chain-of-Thought, Tree-of-Thoughts, Self-Refine, More",
+  title:
+    "Prompt Engineering Glossary — Chain-of-Thought, ReAct, RAG, Self-Refine",
   description:
-    "Plain-English explanations of the prompt-engineering techniques real teams use. Each entry includes when-to-use, how it works, pitfalls, and a working interactive template.",
+    "16 prompt-engineering techniques explained in plain English: Chain-of-Thought (CoT), Tree-of-Thoughts (ToT), Self-Refine, ReAct, RAG, Constitutional AI, Few-Shot, Zero-Shot, Multi-Persona Debate, Pre-Mortem, Step-Back, Self-Consistency, and more. Each with when to use, how it works, pitfalls, and an interactive template.",
+  keywords: [
+    "prompt engineering",
+    "prompt engineering glossary",
+    "chain of thought",
+    "chain of thought prompting",
+    "tree of thoughts",
+    "self-refine",
+    "react prompting",
+    "rag",
+    "retrieval augmented generation",
+    "few shot prompting",
+    "zero shot prompting",
+    "constitutional ai",
+    "self-consistency",
+    "step back prompting",
+    "what is chain of thought",
+  ],
   alternates: { canonical: "/glossary" },
 };
 

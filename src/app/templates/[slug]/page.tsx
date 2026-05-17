@@ -6,6 +6,8 @@ import { CATEGORY_EMOJI, CATEGORY_LABEL, TEMPLATES, getTemplate } from "@/lib/te
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TemplateFiller } from "@/components/TemplateFiller";
 import { TrackEvent } from "@/components/Analytics";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd, howToJsonLd, SITE_URL } from "@/lib/seo";
 import { ArrowLeft, Flame, Lightbulb, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -15,9 +17,20 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const t = getTemplate(params.slug);
   if (!t) return { title: "Template not found" };
+  const platforms = t.platforms.length ? t.platforms.join(", ") : "ChatGPT, Claude, Gemini, Grok";
   return {
-    title: `${t.title} — Better AI prompt template`,
-    description: t.tagline,
+    title: `${t.title} — Free AI prompt template`,
+    description: `${t.tagline} Works with ${platforms}. Interactive fill-in placeholders. Copy-paste ready.`,
+    keywords: [
+      t.title.toLowerCase(),
+      t.technique?.toLowerCase() || "",
+      "ai prompt template",
+      "chatgpt prompt",
+      "claude prompt",
+      "gemini prompt",
+      "grok prompt",
+      ...(t.tags || []),
+    ].filter(Boolean) as string[],
     alternates: { canonical: `/templates/${t.slug}` },
   };
 }
@@ -29,6 +42,24 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
   return (
     <>
       <SiteNav />
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: `${SITE_URL}/` },
+            { name: "Templates", url: `${SITE_URL}/templates` },
+            { name: t.title, url: `${SITE_URL}/templates/${t.slug}` },
+          ]),
+          howToJsonLd({
+            name: t.title,
+            description: t.tagline,
+            url: `${SITE_URL}/templates/${t.slug}`,
+            steps: t.whyItWorks.map((reason, i) => ({
+              name: `Step ${i + 1}`,
+              text: reason,
+            })),
+          }),
+        ]}
+      />
       <TrackEvent
         name="template_opened"
         params={{

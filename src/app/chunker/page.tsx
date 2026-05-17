@@ -4,9 +4,24 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Layers, ListOrdered, Network, Scissors, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Prompt Chunker — Split long text or complex tasks for any LLM",
+  title:
+    "Free Prompt Chunker — Split Long Text for ChatGPT, Claude, Gemini & Grok",
   description:
-    "Two browser-only tools in one. Chunk huge documents into context-fit chunks for ChatGPT, Claude, or Gemini. Or decompose a complex prompt into a chain of focused sub-prompts. Free, no signup.",
+    "The fastest prompt chunker for long text. Token-aware splitting with 9 model presets (GPT-4, GPT-4 Turbo, Claude 200k, Claude Opus 1M, Gemini 1.5 Pro 1M, Llama 3, Mistral). Plus a task decomposer for complex multi-step prompts. 100% browser-only.",
+  keywords: [
+    "prompt chunker",
+    "ai prompt chunker",
+    "text chunker",
+    "token chunker",
+    "split text for chatgpt",
+    "split text for claude",
+    "split text for gemini",
+    "task decomposer",
+    "prompt decomposition",
+    "claude 200k context",
+    "gemini 1m context",
+    "long text llm",
+  ],
   alternates: { canonical: "/chunker" },
 };
 

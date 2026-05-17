@@ -4,9 +4,21 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { Sparkles, ShieldCheck, KeyRound } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Prompt Fixer — Lint and rewrite any AI prompt",
+  title: "AI Prompt Fixer & Optimizer — ChatGPT, Claude, Gemini, Grok",
   description:
-    "Free, browser-only prompt linter and AI-powered rewriter. Catch vague verbs, missing format, contradictions, weak language. Optimize for Claude, GPT, Gemini, Cursor, or Copilot.",
+    "Free AI prompt fixer and optimizer. Paste any prompt, get a multi-metric score (clarity, context, structure) and an auto-rewritten version tailored for ChatGPT, Claude, Gemini, Grok, Cursor, or Copilot. No API key, 100% browser-only.",
+  keywords: [
+    "ai prompt fixer",
+    "ai prompt optimizer",
+    "prompt linter",
+    "prompt rewriter",
+    "chatgpt prompt generator",
+    "claude prompt generator",
+    "gemini prompt generator",
+    "grok prompts",
+    "fix ai prompt",
+    "free prompt generator",
+  ],
   alternates: { canonical: "/fix" },
 };
 

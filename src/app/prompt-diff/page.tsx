@@ -4,9 +4,19 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { ArrowLeftRight, Trophy, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Prompt Diff — Compare two AI prompts side by side",
+  title:
+    "Prompt Diff — Compare AI Prompts for ChatGPT, Claude, Gemini & Grok",
   description:
-    "Paste two prompts. See which one scores higher on clarity, context, structure, specificity, and risk — across 5 metrics. Browser-only, instant.",
+    "Paste two AI prompts side-by-side. We score each on Clarity, Context, Structure, Specificity, and Hallucination Risk — then declare a winner with the reasoning. Free, browser-only, instant.",
+  keywords: [
+    "prompt diff",
+    "compare ai prompts",
+    "compare chatgpt prompts",
+    "prompt comparison",
+    "prompt ab test",
+    "which prompt is better",
+    "prompt benchmark",
+  ],
   alternates: { canonical: "/prompt-diff" },
 };
 

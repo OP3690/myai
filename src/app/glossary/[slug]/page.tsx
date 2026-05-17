@@ -5,6 +5,8 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GLOSSARY, getGlossary } from "@/lib/glossary";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TrackEvent } from "@/components/Analytics";
+import { JsonLd } from "@/components/JsonLd";
+import { articleJsonLd, breadcrumbJsonLd, faqJsonLd, SITE_URL } from "@/lib/seo";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, XCircle, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -14,9 +16,19 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const g = getGlossary(params.slug);
   if (!g) return { title: "Glossary entry not found" };
+  const aliases = g.alsoKnownAs?.join(", ") || g.term;
   return {
-    title: `${g.term} — Prompt-engineering technique explained`,
-    description: g.short,
+    title: `What is ${g.term}? Prompt-engineering technique explained`,
+    description: `${g.short} Plain-English guide with when to use, how it works, common pitfalls, and an interactive prompt template. Also known as: ${aliases}.`,
+    keywords: [
+      `what is ${g.term.toLowerCase()}`,
+      g.term.toLowerCase(),
+      ...(g.alsoKnownAs || []).map((a) => a.toLowerCase()),
+      "prompt engineering",
+      "ai prompting",
+      "chatgpt",
+      "claude",
+    ],
     alternates: { canonical: `/glossary/${g.slug}` },
   };
 }
@@ -31,6 +43,26 @@ export default function GlossaryDetailPage({ params }: { params: { slug: string 
   return (
     <>
       <SiteNav />
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: `${SITE_URL}/` },
+            { name: "Glossary", url: `${SITE_URL}/glossary` },
+            { name: g.term, url: `${SITE_URL}/glossary/${g.slug}` },
+          ]),
+          articleJsonLd({
+            headline: `What is ${g.term}?`,
+            description: g.short,
+            url: `${SITE_URL}/glossary/${g.slug}`,
+            keywords: [g.term, ...(g.alsoKnownAs || []), "prompt engineering"],
+          }),
+          faqJsonLd([
+            { q: `When should you use ${g.term}?`, a: g.whenToUse.join(" ") },
+            { q: `When NOT to use ${g.term}?`, a: g.whenNotToUse.join(" ") },
+            { q: `How does ${g.term} work?`, a: g.howItWorks.join(" ") },
+          ]),
+        ]}
+      />
       <TrackEvent name="glossary_opened" params={{ slug: g.slug }} />
       <main className="relative min-h-screen bg-hero-radial">
         <article className="mx-auto max-w-3xl px-6 pb-20 pt-8 sm:pt-12">
