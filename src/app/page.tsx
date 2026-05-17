@@ -3,6 +3,11 @@ import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { HomePromptHero } from "@/components/HomePromptHero";
 import { HomeChunkerHero } from "@/components/HomeChunkerHero";
+import { LiveDemo } from "@/components/LiveDemo";
+import { ByTheNumbers } from "@/components/ByTheNumbers";
+import { BattleOfTheLLMs } from "@/components/BattleOfTheLLMs";
+import { ViralSnarkWall } from "@/components/ViralSnarkWall";
+import { FeaturedTechniques } from "@/components/FeaturedTechniques";
 import { TechniqueOfTheDay } from "@/components/TechniqueOfTheDay";
 import {
   ArrowRight,
@@ -101,6 +106,14 @@ export default function Home() {
 
         <SectionDivider />
 
+        <LiveDemo />
+
+        <SectionDivider />
+
+        <ByTheNumbers />
+
+        <SectionDivider />
+
         <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
           <div className="mb-8 text-center">
             <h2 className="text-balance text-2xl font-bold sm:text-3xl">Four tools. One mission.</h2>
@@ -153,7 +166,19 @@ export default function Home() {
 
         <SectionDivider />
 
+        <BattleOfTheLLMs />
+
+        <SectionDivider />
+
         <TechniqueOfTheDay />
+
+        <SectionDivider />
+
+        <FeaturedTechniques />
+
+        <SectionDivider />
+
+        <ViralSnarkWall />
 
         <SectionDivider />
 
