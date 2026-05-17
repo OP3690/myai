@@ -1,5 +1,5 @@
-# dependencies
-/node_modules
+# dependencies (anywhere in the tree, incl. cli/ and extension/)
+node_modules
 /.pnp
 .pnp.js
 
