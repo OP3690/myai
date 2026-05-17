@@ -18,6 +18,7 @@ import {
   detectFormat,
   planCSV,
 } from "@/lib/dataCleaner";
+import { events } from "@/lib/analytics";
 
 const SAMPLE_CSV = `user_id,name,email,phone,city,signup_date,api_key,notes
 1001,Ananya Sharma,ananya@example.com,+91 98765 43210,Mumbai,2025-09-12,sk-proj-aBcDe123FgHi456,Renewal upsell
@@ -63,6 +64,7 @@ export function DataCleaner() {
     setOutput("");
     setColumns(null);
     setStats(null);
+    events.dataCleanerSampleLoaded({ sample: "csv" });
   }
   function loadJson() {
     setTab("json");
@@ -70,6 +72,7 @@ export function DataCleaner() {
     setOutput("");
     setColumns(null);
     setStats(null);
+    events.dataCleanerSampleLoaded({ sample: "json" });
   }
   function reset() {
     setText("");
@@ -86,12 +89,19 @@ export function DataCleaner() {
       const r = cleanCSV(plan.headers, plan.rows, plan.columns);
       setOutput(r.output);
       setStats({ masked: r.maskedCells });
+      events.dataCleanerAnalysed({
+        format: "csv",
+        masked_cells: r.maskedCells,
+        column_count: plan.columns.length,
+      });
     } else {
       const r = cleanJSON(text);
       setOutput(r.output);
       setStats({ masked: r.maskedFields });
       setColumns(null);
+      events.dataCleanerAnalysed({ format: "json", masked_cells: r.maskedFields });
     }
+    events.dataCleanerInput({ format: tab, chars: text.length });
   }
 
   function toggleColumn(i: number) {
@@ -102,6 +112,8 @@ export function DataCleaner() {
     const r = cleanCSV(plan.headers, plan.rows, next);
     setOutput(r.output);
     setStats({ masked: r.maskedCells });
+    const toggled = next.find((c) => c.index === i);
+    if (toggled) events.dataCleanerColumnToggled({ kind: toggled.kind, on: toggled.mask });
   }
 
   async function copyOutput() {
@@ -127,6 +139,7 @@ export function DataCleaner() {
       URL.revokeObjectURL(a.href);
       document.body.removeChild(a);
     }, 100);
+    events.dataCleanerDownloaded({ format: tab });
   }
 
   return (

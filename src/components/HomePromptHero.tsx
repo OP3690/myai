@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { improvePrompt } from "@/lib/autoFix";
 import { lintPrompt } from "@/lib/linter";
+import { events } from "@/lib/analytics";
 import { MetricBreakdown } from "./MetricBreakdown";
 import { PromptImprovement } from "./PromptImprovement";
 import { SharePromptFix } from "./SharePromptFix";
@@ -29,6 +30,29 @@ export function HomePromptHero() {
   const improved = useMemo(() => (prompt.trim() ? improvePrompt(prompt) : null), [prompt]);
   const hasContent = report.stats.words > 0;
 
+  // Debounced "prompt scored" event — fire once when the user stops typing
+  // for ~1.5s. Avoids one event per keystroke.
+  const scoreTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScoredRef = useRef<string>("");
+  useEffect(() => {
+    if (!improved || !hasContent) return;
+    if (lastScoredRef.current === prompt) return;
+    if (scoreTimer.current) clearTimeout(scoreTimer.current);
+    scoreTimer.current = setTimeout(() => {
+      lastScoredRef.current = prompt;
+      events.promptScored({
+        surface: "home",
+        task_type: improved.taskType,
+        score_before: improved.scoreBefore,
+        score_after: improved.scoreAfter,
+        words: report.stats.words,
+      });
+    }, 1500);
+    return () => {
+      if (scoreTimer.current) clearTimeout(scoreTimer.current);
+    };
+  }, [prompt, improved, hasContent, report.stats.words]);
+
   return (
     <div className="mx-auto mt-10 max-w-5xl space-y-6">
       <div className="card relative overflow-hidden p-5 sm:p-6">
@@ -42,7 +66,10 @@ export function HomePromptHero() {
             {SAMPLES.map((s) => (
               <button
                 key={s.label}
-                onClick={() => setPrompt(s.text)}
+                onClick={() => {
+                  setPrompt(s.text);
+                  events.promptSampleLoaded({ surface: "home", sample: s.label });
+                }}
                 className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-ink-dim transition hover:bg-white/5 hover:text-ink"
               >
                 {s.label}

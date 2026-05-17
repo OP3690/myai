@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -18,6 +18,7 @@ import {
   detectComplexityHint,
   estimateTokens,
 } from "@/lib/chunker";
+import { events } from "@/lib/analytics";
 
 type Sample = { key: string; label: string; text: string };
 
@@ -169,14 +170,42 @@ export function HomeChunkerHero() {
 
   const recommendDecomposer = detected === "prompt-task" || (decomposeHint.isComplex && text.length < 1200);
 
+  // Debounced chunker_input event so we capture content-type + tokens + model
+  // without firing on every keystroke.
+  const inputTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastInputRef = useRef<string>("");
+  useEffect(() => {
+    if (!text.trim() || tokens < 40) return;
+    const key = text + "|" + modelId;
+    if (lastInputRef.current === key) return;
+    if (inputTimer.current) clearTimeout(inputTimer.current);
+    inputTimer.current = setTimeout(() => {
+      lastInputRef.current = key;
+      events.chunkerInput({
+        surface: "home",
+        chars: text.length,
+        tokens,
+        detected_type: detected ?? undefined,
+        model: modelId,
+      });
+    }, 1200);
+    return () => {
+      if (inputTimer.current) clearTimeout(inputTimer.current);
+    };
+  }, [text, modelId, tokens, detected]);
+
   // Hand off to /chunker via sessionStorage so the full tool picks it up.
   function handoffHref(mode: "split" | "decompose"): string {
+    return mode === "decompose" ? "/chunker?from=home&mode=decompose" : "/chunker?from=home";
+  }
+
+  function onHandoffClick(mode: "split" | "decompose") {
     if (typeof window !== "undefined" && text.trim()) {
       try {
         sessionStorage.setItem("fixaiprompt.chunker.handoff", JSON.stringify({ mode, text, modelId }));
       } catch {}
     }
-    return mode === "decompose" ? "/chunker?from=home&mode=decompose" : "/chunker?from=home";
+    events.chunkerHandoff({ mode, tokens });
   }
 
   async function copy(value: string, idx: number) {
@@ -184,11 +213,13 @@ export function HomeChunkerHero() {
       await navigator.clipboard.writeText(value);
       setCopiedIdx(idx);
       setTimeout(() => setCopiedIdx(null), 1500);
+      events.chunkerCopyChunk({ surface: "home", index: idx, total: chunks.length });
     } catch {}
   }
 
   function loadSample(s: Sample) {
     setText(s.text);
+    events.chunkerSampleLoaded({ surface: "home", sample: s.key });
   }
 
   const hasMeaningful = text.trim().length > 10;
@@ -315,6 +346,7 @@ export function HomeChunkerHero() {
               </div>
               <Link
                 href={handoffHref("decompose")}
+                onClick={() => onHandoffClick("decompose")}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-violet-400/40 bg-violet-400/15 px-3 py-1.5 text-xs font-semibold text-violet-200 transition hover:bg-violet-400/25"
               >
                 Decompose this <ArrowRight className="h-3.5 w-3.5" />
@@ -333,6 +365,7 @@ export function HomeChunkerHero() {
               </h3>
               <Link
                 href={handoffHref("split")}
+                onClick={() => onHandoffClick("split")}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white shadow-glow transition hover:bg-accent-glow"
               >
                 <Sparkles className="h-3.5 w-3.5" />

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { CommandPalette } from "@/components/CommandPalette";
+import { AnalyticsPageView } from "@/components/Analytics";
 
 const GA_MEASUREMENT_ID = "G-HBSX0Q2WGT";
 
@@ -59,6 +60,7 @@ export default function RootLayout({
       <body className="font-sans">
         {children}
         <CommandPalette />
+        <AnalyticsPageView />
         {/* Google Analytics 4 — loaded after page is interactive so it doesn't block paint. */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}

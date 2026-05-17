@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { TEMPLATES } from "@/lib/templates";
 import { GLOSSARY } from "@/lib/glossary";
+import { events } from "@/lib/analytics";
 
 type Item = {
   id: string;
@@ -204,10 +205,11 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Focus input when opened
+  // Focus input when opened + fire analytics open event
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 10);
+      events.cmdkOpened();
     } else {
       setQuery("");
       setActive(0);
@@ -224,6 +226,12 @@ export function CommandPalette() {
   const go = useCallback(
     (item: Item) => {
       setOpen(false);
+      // Extract the slug from item.id which encodes "<kind>-<slug>" for templates/glossary
+      const slug =
+        item.kind === "template" || item.kind === "glossary"
+          ? item.id.replace(/^(template|glossary)-/, "")
+          : undefined;
+      events.cmdkPick({ kind: item.kind, slug });
       router.push(item.href);
     },
     [router]

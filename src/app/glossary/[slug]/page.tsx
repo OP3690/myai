@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GLOSSARY, getGlossary } from "@/lib/glossary";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { TrackEvent } from "@/components/Analytics";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, XCircle, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -30,6 +31,7 @@ export default function GlossaryDetailPage({ params }: { params: { slug: string 
   return (
     <>
       <SiteNav />
+      <TrackEvent name="glossary_opened" params={{ slug: g.slug }} />
       <main className="relative min-h-screen bg-hero-radial">
         <article className="mx-auto max-w-3xl px-6 pb-20 pt-8 sm:pt-12">
           <Link

@@ -19,6 +19,7 @@ import {
   type TemplateCategory,
 } from "@/lib/templates";
 import { readFavorites } from "@/lib/favorites";
+import { events } from "@/lib/analytics";
 import { FavoriteButton } from "./FavoriteButton";
 
 // Filter chips (multi-select)
@@ -32,6 +33,24 @@ type Filter =
 export function TemplatesBrowser() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>({ kind: "all" });
+
+  // Helper that wraps setFilter to also emit analytics.
+  function pickFilter(f: Filter) {
+    setFilter(f);
+    const label =
+      f.kind === "category" ? `category:${f.category}` : f.kind;
+    events.templatesFiltered({ filter: label });
+  }
+
+  // Debounced search-fired event so we capture what's being searched without
+  // firing one per keystroke.
+  useEffect(() => {
+    if (!query.trim()) return;
+    const t = setTimeout(() => {
+      events.templatesSearched({ query_len: query.length, results: 0 });
+    }, 800);
+    return () => clearTimeout(t);
+  }, [query]);
   const [favTick, setFavTick] = useState(0);
 
   useEffect(() => {
@@ -150,17 +169,17 @@ export function TemplatesBrowser() {
           )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => setFilter({ kind: "all" })} className={chipClasses(filter.kind === "all")}>
+          <button onClick={() => pickFilter({ kind: "all" })} className={chipClasses(filter.kind === "all")}>
             All <span className="opacity-60">{counts.all}</span>
           </button>
-          <button onClick={() => setFilter({ kind: "advanced" })} className={chipClasses(filter.kind === "advanced", "violet")}>
+          <button onClick={() => pickFilter({ kind: "advanced" })} className={chipClasses(filter.kind === "advanced", "violet")}>
             <Zap className="h-3 w-3" /> Advanced <span className="opacity-60">{counts.advanced}</span>
           </button>
-          <button onClick={() => setFilter({ kind: "viral" })} className={chipClasses(filter.kind === "viral", "rose")}>
+          <button onClick={() => pickFilter({ kind: "viral" })} className={chipClasses(filter.kind === "viral", "rose")}>
             <Flame className="h-3 w-3" /> Viral <span className="opacity-60">{counts.viral}</span>
           </button>
           <button
-            onClick={() => setFilter({ kind: "saved" })}
+            onClick={() => pickFilter({ kind: "saved" })}
             className={chipClasses(filter.kind === "saved", "amber")}
             title="Templates you've saved (★)"
           >
@@ -170,7 +189,7 @@ export function TemplatesBrowser() {
           {categories.map((c) => (
             <button
               key={c}
-              onClick={() => setFilter({ kind: "category", category: c })}
+              onClick={() => pickFilter({ kind: "category", category: c })}
               className={chipClasses(filter.kind === "category" && filter.category === c)}
             >
               <span>{CATEGORY_EMOJI[c]}</span>

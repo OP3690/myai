@@ -7,6 +7,7 @@ import {
   TASK_TYPE_LABEL,
   type TaskType,
 } from "@/lib/autoFix";
+import { events } from "@/lib/analytics";
 
 const SITE = "https://fixaiprompt.com";
 
@@ -43,6 +44,7 @@ export function SharePromptFix({
       await navigator.clipboard.writeText(shareLineLong);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      events.shareCardAction({ action: "copy", delta });
     } catch {}
   }
 
@@ -73,6 +75,7 @@ export function SharePromptFix({
           href={tweetUrl}
           target="_blank"
           rel="noreferrer"
+          onClick={() => events.shareCardAction({ action: "x", delta })}
           className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-black/60"
         >
           <Twitter className="h-3.5 w-3.5" />
@@ -82,6 +85,7 @@ export function SharePromptFix({
           href={linkedInUrl}
           target="_blank"
           rel="noreferrer"
+          onClick={() => events.shareCardAction({ action: "linkedin", delta })}
           className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#0a66c2]/30 px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-[#0a66c2]/50"
         >
           <Linkedin className="h-3.5 w-3.5" />

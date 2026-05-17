@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { estimateTokens } from "@/lib/chunker";
 import type { Template } from "@/lib/templates";
+import { events } from "@/lib/analytics";
 
 type Placeholder = {
   raw: string;
@@ -274,6 +275,12 @@ export function TemplateFiller({
       await navigator.clipboard.writeText(filled);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      events.templateCopied({
+        slug,
+        filled_count: filledCount,
+        total,
+        fully_filled: allFilled,
+      });
     } catch {}
   }
 
@@ -289,6 +296,7 @@ export function TemplateFiller({
       window.history.replaceState(null, "", `#fill=${b64}`);
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 1500);
+      events.templateLinkShared({ slug, filled_count: filledCount });
     } catch {}
   }
 
@@ -300,6 +308,7 @@ export function TemplateFiller({
   function showSample() {
     const samples = getSampleValues({ sampleValues }, placeholders);
     setValues(samples);
+    events.templateSampleLoaded({ slug });
   }
 
   function setVal(key: string, v: string) {

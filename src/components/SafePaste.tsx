@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -20,6 +20,7 @@ import {
 } from "@/lib/detector";
 import { mask, type MaskMode } from "@/lib/masker";
 import { bandColor, bandRing, computeLeakScore } from "@/lib/leakScore";
+import { events } from "@/lib/analytics";
 
 const SAMPLES: Record<string, string> = {
   log: `[2026-05-11 09:12:44] User john.doe@acme.com signed in from 49.207.181.22
@@ -74,11 +75,33 @@ export function SafePaste() {
   const { output, detections } = useMemo(() => mask(input, mode), [input, mode]);
   const score = useMemo(() => computeLeakScore(detections), [detections]);
 
+  // Debounced "scanned" event — fires after user stops typing.
+  const scanTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScannedRef = useRef<string>("");
+  useEffect(() => {
+    if (!input.trim()) return;
+    if (lastScannedRef.current === input + mode) return;
+    if (scanTimer.current) clearTimeout(scanTimer.current);
+    scanTimer.current = setTimeout(() => {
+      lastScannedRef.current = input + mode;
+      events.safePasteScanned({
+        chars: input.length,
+        detections: detections.length,
+        band: score.band,
+        mode,
+      });
+    }, 1200);
+    return () => {
+      if (scanTimer.current) clearTimeout(scanTimer.current);
+    };
+  }, [input, mode, detections.length, score.band]);
+
   async function copy(value: string, which: "masked" | "summary") {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(which);
       setTimeout(() => setCopied("none"), 1500);
+      events.safePasteCopied({ mode, what: which });
     } catch {}
   }
 
@@ -87,6 +110,7 @@ export function SafePaste() {
     if (key === "json") setMode("json");
     else if (key === "sql") setMode("sql");
     else setMode("plain");
+    events.safePasteSampleLoaded({ sample: key });
   }
 
   function buildShareSummary(): string {
@@ -155,7 +179,13 @@ export function SafePaste() {
               )}
             </span>
             <div className="flex items-center gap-2">
-              <ModeToggle mode={mode} setMode={setMode} />
+              <ModeToggle
+                mode={mode}
+                setMode={(m) => {
+                  setMode(m);
+                  events.safePasteModeChanged({ mode: m });
+                }}
+              />
               <button
                 onClick={() => setInput("")}
                 disabled={!input}

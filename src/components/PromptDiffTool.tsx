@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeftRight,
   CheckCircle2,
@@ -22,6 +22,7 @@ import {
   TASK_TYPE_LABEL,
   detectTaskType,
 } from "@/lib/autoFix";
+import { events } from "@/lib/analytics";
 
 const SAMPLE_A = "write a blog post about AI";
 const SAMPLE_B =
@@ -61,13 +62,34 @@ export function PromptDiffTool() {
       await navigator.clipboard.writeText(v);
       setCopied(which);
       setTimeout(() => setCopied("none"), 1500);
+      events.promptDiffCopied({ which });
     } catch {}
   }
 
   function tryFromSamples() {
     setA(SAMPLE_A);
     setB(SAMPLE_B);
+    events.promptDiffSampleLoaded();
   }
+
+  // Fire compared event once both prompts are filled and stable for ~1s.
+  const comparedRef = useRef<string>("");
+  useEffect(() => {
+    if (!bothFilled || !winner) return;
+    const key = `${a.length}|${b.length}|${winner}`;
+    if (comparedRef.current === key) return;
+    const t = setTimeout(() => {
+      comparedRef.current = key;
+      events.promptDiffCompared({
+        winner: winner as "a" | "b" | "tie",
+        score_a: reportA.score,
+        score_b: reportB.score,
+        task_a: taskA,
+        task_b: taskB,
+      });
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [bothFilled, winner, a, b, reportA.score, reportB.score, taskA, taskB]);
 
   function swap() {
     setA(b);

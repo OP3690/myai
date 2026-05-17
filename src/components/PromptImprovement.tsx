@@ -20,6 +20,7 @@ import {
   type TargetModel,
 } from "@/lib/autoFix";
 import { METRIC_LABEL, type Metric } from "@/lib/linter";
+import { events } from "@/lib/analytics";
 
 const MODEL_TABS: { value: TargetModel; label: string; hint: string }[] = [
   { value: "claude", label: "Claude", hint: "XML-tagged sections, anthropic-style" },
@@ -57,6 +58,7 @@ export function PromptImprovement({ prompt }: { prompt: string }) {
   function pickModel(m: TargetModel) {
     setModel(m);
     try { localStorage.setItem(STORAGE_KEY_MODEL, m); } catch {}
+    events.promptModelChanged({ surface: "home", model: m });
   }
 
   async function copy() {
@@ -64,6 +66,7 @@ export function PromptImprovement({ prompt }: { prompt: string }) {
       await navigator.clipboard.writeText(improved);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+      events.promptCopied({ surface: "home", model });
     } catch {}
   }
 

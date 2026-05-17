@@ -5,6 +5,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { CATEGORY_EMOJI, CATEGORY_LABEL, TEMPLATES, getTemplate } from "@/lib/templates";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { TemplateFiller } from "@/components/TemplateFiller";
+import { TrackEvent } from "@/components/Analytics";
 import { ArrowLeft, Flame, Lightbulb, Zap } from "lucide-react";
 
 export function generateStaticParams() {
@@ -28,6 +29,16 @@ export default function TemplateDetailPage({ params }: { params: { slug: string 
   return (
     <>
       <SiteNav />
+      <TrackEvent
+        name="template_opened"
+        params={{
+          slug: t.slug,
+          technique: t.technique,
+          category: t.category,
+          advanced: !!t.advanced,
+          viral: !!t.viral,
+        }}
+      />
       <main className="relative min-h-screen bg-hero-radial">
         <div className="mx-auto max-w-4xl px-6 pb-20 pt-8 sm:pt-12">
           <Link

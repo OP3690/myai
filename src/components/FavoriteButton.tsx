@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { events } from "@/lib/analytics";
 
 export function FavoriteButton({
   kind,
@@ -31,6 +32,11 @@ export function FavoriteButton({
     e.preventDefault();
     e.stopPropagation();
     toggleFavorite(kind, slug);
+    if (kind === "templates") {
+      events.templateFavorited({ slug, on: !fav });
+    } else {
+      events.glossaryFavorited({ slug, on: !fav });
+    }
   }
 
   if (variant === "chip") {

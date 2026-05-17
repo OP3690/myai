@@ -21,6 +21,7 @@ import {
   type ChunkPrefixMode,
   type Decomposition,
 } from "@/lib/chunker";
+import { events } from "@/lib/analytics";
 
 type Mode = "split" | "decompose";
 
@@ -72,6 +73,7 @@ export function ChunkerTool() {
   function pickMode(m: Mode) {
     setMode(m);
     try { localStorage.setItem(STORAGE_KEY_MODE, m); } catch {}
+    events.chunkerModeChanged({ mode: m });
   }
 
   return (
@@ -163,9 +165,11 @@ function TextChunker({
       if (idx === "all") {
         setCopiedAll(true);
         setTimeout(() => setCopiedAll(false), 1500);
+        events.chunkerCopyChunk({ surface: "tool", total: chunks.length });
       } else {
         setCopiedIdx(idx);
         setTimeout(() => setCopiedIdx(null), 1500);
+        events.chunkerCopyChunk({ surface: "tool", index: idx, total: chunks.length });
       }
     } catch {}
   }
@@ -179,7 +183,10 @@ function TextChunker({
           </h3>
           <button
             type="button"
-            onClick={() => setText(SAMPLE_TEXT)}
+            onClick={() => {
+              setText(SAMPLE_TEXT);
+              events.chunkerSampleLoaded({ surface: "tool", sample: "transcript" });
+            }}
             className="text-xs text-accent-glow transition hover:text-accent"
           >
             Try a sample transcript
@@ -199,7 +206,10 @@ function TextChunker({
             <label className="mb-1 block text-xs font-medium text-ink-dim">Target model</label>
             <select
               value={modelId}
-              onChange={(e) => setModelId(e.target.value)}
+              onChange={(e) => {
+                setModelId(e.target.value);
+                events.chunkerModelChanged({ surface: "tool", model: e.target.value });
+              }}
               className="input-base"
               data-testid="model-select"
             >
@@ -425,7 +435,10 @@ function TaskDecomposer({ initialText }: { initialText?: string }) {
           </h3>
           <button
             type="button"
-            onClick={() => setPrompt(SAMPLE_DECOMP)}
+            onClick={() => {
+              setPrompt(SAMPLE_DECOMP);
+              events.chunkerSampleLoaded({ surface: "tool", sample: "decompose-task" });
+            }}
             className="text-xs text-accent-glow transition hover:text-accent"
           >
             Try a sample
