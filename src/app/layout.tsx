@@ -129,6 +129,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/*
+          AdSense site-verification script.
+          Rendered as a literal <script> in <head> so it shows up in the
+          initial HTML response (Google's AdSense crawler doesn't execute
+          JS and won't see scripts injected by next/script).
+        */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+        />
+        {/* Optional: AdSense meta tag (some setups require this in addition to the script). */}
+        <meta name="google-adsense-account" content={ADSENSE_CLIENT_ID} />
         <JsonLd data={[websiteJsonLd(), organizationJsonLd()]} />
       </head>
       <body className="font-sans">
@@ -148,13 +161,6 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-        {/* Google AdSense loader — async, after interactive so it never blocks paint. */}
-        <Script
-          id="adsbygoogle-init"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-        />
       </body>
     </html>
   );
