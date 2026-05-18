@@ -7,6 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 const GA_MEASUREMENT_ID = "G-HBSX0Q2WGT";
+const ADSENSE_CLIENT_ID = "ca-pub-6349841658473646";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fixaiprompt.com"),
@@ -147,6 +148,13 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
+        {/* Google AdSense loader — async, after interactive so it never blocks paint. */}
+        <Script
+          id="adsbygoogle-init"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   );
