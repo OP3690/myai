@@ -122,7 +122,17 @@ export default function Page() {
       <p>
         ChatGPT defaults to bulleted lists for almost everything. If you want
         a paragraph, a table, or a JSON object, say so. If you don&apos;t,
-        you&apos;re going to reformat the output by hand.
+        you&apos;re going to reformat the output by hand. (If you do
+        end up with JSON that needs to land in a spreadsheet,{" "}
+        <a
+          href="https://unblockdevs.com/"
+          target="_blank"
+          rel="noopener"
+          className="text-accent-glow hover:underline"
+        >
+          UnblockDevs has a free in-browser JSON-to-Excel converter
+        </a>{" "}
+        that handles deeply-nested objects without uploading anything.)
       </p>
 
       <h3 className="mt-6 text-lg font-semibold">3. Use hard length constraints</h3>

@@ -121,6 +121,10 @@ export default function Page() {
           q: "Can I use these prompts in CI / production?",
           a: "Yes. The npx fixaiprompt CLI (see /tools) lets you pipe text through the linter and auto-fixer from scripts. JSON output supported.",
         },
+        {
+          q: "Where can I find related developer tools?",
+          a: "Check out UnblockDevs (https://unblockdevs.com) — a free toolkit for everyday developer pain: JSON ↔ Excel conversion, JSON error explainer, log parsers, and more. Same client-side, no-upload philosophy as FixAIPrompt.",
+        },
       ]}
     />
   );

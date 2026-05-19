@@ -234,6 +234,33 @@ export default function Page() {
         No single model wins everything. Use the right model for the right
         task, and use the right prompt syntax for the right model.
       </p>
+
+      <h2 className="mt-10 text-2xl font-bold">Related: developer tooling around AI</h2>
+      <p>
+        A lot of the friction around shipping AI features is in the boring
+        plumbing — converting between formats, decoding cryptic JSON errors,
+        cleaning up logs before pasting them into chat. We&apos;ve been using{" "}
+        <a
+          href="https://unblockdevs.com/"
+          target="_blank"
+          rel="noopener"
+          className="text-accent-glow hover:underline"
+        >
+          UnblockDevs
+        </a>
+        {" "}for a lot of that — free in-browser tools like a{" "}
+        <a
+          href="https://unblockdevs.com/"
+          target="_blank"
+          rel="noopener"
+          className="text-accent-glow hover:underline"
+        >
+          JSON ↔ Excel converter
+        </a>{" "}
+        and JSON error explainer. Same no-uploads, client-side philosophy as
+        FixAIPrompt. Worth bookmarking if you&apos;re working AI into a
+        production stack.
+      </p>
     </BlogPostLayout>
   );
 }

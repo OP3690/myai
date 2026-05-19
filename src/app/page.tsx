@@ -24,9 +24,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "FixAIPrompt — Fix prompts. Remove secrets. Use AI safely.",
+  title: "FixAIPrompt — Better Prompts. Safer Pastes. Every AI.",
   description:
-    "The privacy layer for AI. Lint and rewrite any prompt, detect API keys / JWTs / PII before pasting into ChatGPT, Claude, or Gemini. Free, 100% client-side.",
+    "Free in-browser AI tools. Score and rewrite any prompt for ChatGPT, Claude, Gemini, or Grok. Mask 30+ kinds of API keys and PII before pasting. 58 templates, 16 technique explainers. No signup, no API key.",
   alternates: { canonical: "/" },
 };
 
@@ -59,20 +59,21 @@ export default function Home() {
         <section className="mx-auto max-w-5xl px-6 pb-10 pt-12 text-center sm:pt-20">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-ink-dim">
             <Zap className="h-3 w-3 text-accent-glow" />
-            Free · 100% browser-only · Nothing leaves your laptop
+            Free · No signup · No API key · 100% browser-only
           </div>
           <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-            Fix prompts. Remove{" "}
-            <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
-              secrets
-            </span>
-            .{" "}
+            Better{" "}
             <span className="bg-gradient-to-r from-accent-glow via-accent to-accent-cyan bg-clip-text text-transparent">
-              Use AI safely.
+              prompts
             </span>
+            . Safer{" "}
+            <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
+              pastes
+            </span>
+            . Every AI.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-ink-dim sm:text-lg">
-            The <strong className="text-ink">privacy layer for AI</strong>. Optimize prompts with task-aware rewriting, redact API keys and PII before pasting, chunk huge inputs to fit any model, and steal from battle-tested templates — all in one browser tab.
+            Free in-browser tools that score any prompt across <strong className="text-ink">5 metrics</strong>, mask <strong className="text-ink">30+ kinds of API keys and PII</strong> before you paste, and rewrite for <strong className="text-ink">ChatGPT, Claude, Gemini, or Grok</strong> in each model&apos;s preferred syntax. 58 templates. 16 technique explainers. Nothing ever leaves your browser.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href="/safe-paste" className="btn-ghost">
