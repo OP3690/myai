@@ -60,7 +60,7 @@ export function SiteNav() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-white/5">
-      <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 text-sm sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 text-sm sm:grid-cols-2 lg:grid-cols-6">
         <div>
           <div className="flex items-center gap-2">
             <div className="grid h-7 w-7 place-items-center rounded-lg bg-accent/20 ring-1 ring-accent/40">
@@ -97,19 +97,31 @@ export function SiteFooter() {
           ]}
         />
         <FooterCol
-          title="Use cases"
+          title="By audience"
+          links={[
+            { href: "/prompts-for-developers", label: "AI prompts for developers" },
+            { href: "/prompts-for-writers", label: "AI prompts for writers" },
+            { href: "/prompts-for-students", label: "AI prompts for students" },
+            { href: "/prompts-for-marketers", label: "AI prompts for marketers" },
+          ]}
+        />
+        <FooterCol
+          title="Learn"
+          links={[
+            { href: "/blog", label: "Blog" },
+            { href: "/blog/how-to-write-better-chatgpt-prompts-2026", label: "How to write better ChatGPT prompts" },
+            { href: "/blog/chatgpt-vs-claude-vs-gemini", label: "ChatGPT vs Claude vs Gemini" },
+            { href: "/blog/chain-of-thought-prompting-practical-guide", label: "Chain-of-Thought guide" },
+            { href: "/prompt-iq", label: "Take the Prompt IQ test" },
+          ]}
+        />
+        <FooterCol
+          title="Privacy use-cases"
           links={[
             { href: "/safe-chatgpt-paste", label: "Safe ChatGPT paste" },
             { href: "/mask-api-keys", label: "Mask API keys" },
             { href: "/sanitize-logs-for-ai", label: "Sanitize logs for AI" },
             { href: "/remove-pii-from-json", label: "Remove PII from JSON" },
-          ]}
-        />
-        <FooterCol
-          title="About"
-          links={[
-            { href: "/#how", label: "How it works" },
-            { href: "/#faq", label: "FAQ" },
           ]}
         />
       </div>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { GLOSSARY } from "@/lib/glossary";
 import { TEMPLATES } from "@/lib/templates";
+import { BLOG_POSTS } from "@/lib/blog";
 
 const BASE = "https://fixaiprompt.com";
 
@@ -21,6 +22,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/claude-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${BASE}/gemini-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.95 },
     { url: `${BASE}/grok-prompts`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    // Use-case landings
+    { url: `${BASE}/prompts-for-developers`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/prompts-for-writers`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/prompts-for-students`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/prompts-for-marketers`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    // Blog
+    { url: `${BASE}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    // Viral
+    { url: `${BASE}/prompt-iq`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/safe-chatgpt-paste`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/mask-api-keys`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/sanitize-logs-for-ai`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
@@ -41,5 +51,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticUrls, ...templateUrls, ...glossaryUrls];
+  const blogUrls = BLOG_POSTS.map((p) => ({
+    url: `${BASE}/blog/${p.slug}`,
+    lastModified: new Date(p.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
+
+  return [...staticUrls, ...templateUrls, ...glossaryUrls, ...blogUrls];
 }
