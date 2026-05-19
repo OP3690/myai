@@ -24,9 +24,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "FixAIPrompt — Better Prompts. Safer Pastes. Every AI.",
+  title: "FixAIPrompt — Make Every AI Actually Listen",
   description:
-    "Free in-browser AI tools. Score and rewrite any prompt for ChatGPT, Claude, Gemini, or Grok. Mask 30+ kinds of API keys and PII before pasting. 58 templates, 16 technique explainers. No signup, no API key.",
+    "Paste any rough prompt. FixAIPrompt grades it across 5 metrics, rewrites it for ChatGPT, Claude, Gemini, or Grok, and masks API keys and PII before you hit send. 58 templates. Free, browser-only, no signup.",
   alternates: { canonical: "/" },
 };
 
@@ -62,18 +62,24 @@ export default function Home() {
             Free · No signup · No API key · 100% browser-only
           </div>
           <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-            Better{" "}
+            Make{" "}
             <span className="bg-gradient-to-r from-accent-glow via-accent to-accent-cyan bg-clip-text text-transparent">
-              prompts
-            </span>
-            . Safer{" "}
+              every AI
+            </span>{" "}
+            actually{" "}
             <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
-              pastes
+              listen
             </span>
-            . Every AI.
+            .
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-ink-dim sm:text-lg">
-            Free in-browser tools that score any prompt across <strong className="text-ink">5 metrics</strong>, mask <strong className="text-ink">30+ kinds of API keys and PII</strong> before you paste, and rewrite for <strong className="text-ink">ChatGPT, Claude, Gemini, or Grok</strong> in each model&apos;s preferred syntax. 58 templates. 16 technique explainers. Nothing ever leaves your browser.
+            Paste any rough prompt. FixAIPrompt grades it across{" "}
+            <strong className="text-ink">5 metrics</strong>, rewrites it in the syntax{" "}
+            <strong className="text-ink">ChatGPT, Claude, Gemini, or Grok</strong>{" "}
+            handles best, and masks{" "}
+            <strong className="text-ink">30+ kinds of API keys and PII</strong>{" "}
+            before you hit send. 58 templates. 16 technique guides. The
+            model isn&apos;t the problem — your prompt is.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href="/safe-paste" className="btn-ghost">
